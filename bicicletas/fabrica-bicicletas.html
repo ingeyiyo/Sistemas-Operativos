@@ -1,0 +1,1395 @@
+<meta charset="utf-8">
+<title>Fábrica de Bicicletas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: barra de control arriba, la escena (carta de tejido) a todo el ancho, después el código clave y las explicaciones. Mismo mundo visual que taller-jerseys-v2. */
+  :root {
+    --bg: #EEF1F5;
+    --surface: #FFFFFF;
+    --ink: #18212E;
+    --muted: #566173;
+    --line: #D3D9E2;
+    --accent: #33469F;
+    --f-ui: "Archivo", "Segoe UI", system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1218;
+      --surface: #161C25;
+      --ink: #E4E8EF;
+      --muted: #98A2B3;
+      --line: #2A3240;
+      --accent: #9AA9F2;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0E1218;
+    --surface: #161C25;
+    --ink: #E4E8EF;
+    --muted: #98A2B3;
+    --line: #2A3240;
+    --accent: #9AA9F2;
+    color-scheme: dark;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--f-ui);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 20px 56px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--surface);
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  header h1 {
+    font-weight: 800;
+    font-stretch: 112%;
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    max-width: 72ch;
+  }
+
+  /* El enunciado ocupa todo el ancho de la página */
+  header p.enunciado {
+    max-width: none;
+    color: var(--ink);
+    margin-top: 10px;
+  }
+
+  .ctl {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 6px 18px -12px rgba(10, 20, 40, .35);
+  }
+
+  .g {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .g>.lbl {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .seg button {
+    border: 0;
+    border-right: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    padding: 6px 12px;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .seg button:last-child {
+    border-right: 0;
+  }
+
+  .seg button[aria-pressed="true"] {
+    background: var(--accent);
+    color: var(--surface);
+    font-weight: 700;
+  }
+
+  .btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn.pri {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--surface);
+    min-width: 7.2em;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  input[type="range"] {
+    accent-color: var(--accent);
+    width: 120px;
+  }
+
+  .ritmo-txt {
+    font-size: .85rem;
+    color: var(--muted);
+    min-width: 5.5em;
+  }
+
+  .escena {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* Código clave: el monitor real, con marcas numeradas que remiten a las notas */
+  .clave {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    border-radius: 14px;
+    overflow: hidden;
+    --grid: #DDE5EF;
+    --grid10: #BCCADB;
+    --k-ink: #182536;
+    --k-ink2: #475870;
+    --k-ens: #3243A3;
+    --k-bloq: #D08F00;
+    --k-bloq-bg: #FFF4D6;
+    background: #fff;
+    color: var(--k-ink);
+    border: 1px solid var(--grid10);
+  }
+
+  @media (max-width: 900px) {
+    .clave {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .clave-cod {
+    background-color: #F9FBFD;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    padding: 18px 0;
+    overflow-x: auto;
+    border-right: 1px solid var(--grid10);
+  }
+
+  .clave-cod pre {
+    margin: 0;
+    font-family: "Martian Mono", monospace;
+    font-size: .86rem;
+    line-height: 1.85;
+  }
+
+  .clave-cod .l {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding-right: 16px;
+  }
+
+  .clave-cod .l>i {
+    font-style: normal;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .clave-cod .l.k {
+    background: rgba(50, 67, 163, .08);
+  }
+
+  .clave-cod .l.k.w {
+    background: var(--k-bloq-bg);
+  }
+
+  .clave-cod .kw {
+    color: var(--k-ens);
+    font-weight: 600;
+  }
+
+  .clave-cod .cm {
+    color: var(--k-ink2);
+    font-style: italic;
+  }
+
+  .mk {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--k-ens);
+    color: #fff;
+    font-family: "Martian Mono", monospace;
+    font-size: .72rem;
+    font-weight: 600;
+    flex: none;
+  }
+
+  .mk.w {
+    background: var(--k-bloq);
+    color: #1B1300;
+  }
+
+  .clave-notas {
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .clave-notas h3 {
+    margin: 0;
+    font-weight: 800;
+    font-stretch: 108%;
+    font-size: 1.2rem;
+  }
+
+  .clave-notas ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .clave-notas li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+
+  .clave-notas code {
+    font-family: "Martian Mono", monospace;
+    font-size: .82em;
+    color: var(--k-ens);
+  }
+
+  .clave-notas .pie {
+    margin: 0;
+    color: var(--k-ink2);
+    font-size: .9rem;
+  }
+
+  .explica {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .explica .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .explica h3 {
+    margin: 0 0 8px;
+    font-weight: 800;
+    font-stretch: 108%;
+    font-size: 1.2rem;
+  }
+
+  .explica p,
+  .explica li {
+    max-width: 75ch;
+  }
+
+  .explica code,
+  header code {
+    font-family: "Martian Mono", monospace;
+    font-size: .82em;
+  }
+
+  .tabla-wrap {
+    overflow-x: auto;
+  }
+
+  .explica table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+  }
+
+  .explica th,
+  .explica td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .explica thead th {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+  }
+
+  .explica tbody td:first-child {
+    font-weight: 700;
+  }
+
+  .nota-pie {
+    color: var(--muted);
+    font-size: .9rem;
+    margin: 12px 0 0;
+  }
+
+  /* ===== Escena ===== */
+  .sk {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .sk-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+  }
+
+  .sk-floor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .sk-low {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+
+    .sk-floor,
+    .sk-low {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .sk-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .sk-threads {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 3;
+  }
+
+  .slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .slot {
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .slot svg {
+    opacity: 0;
+    transform: scale(.4);
+    transition: opacity .2s, transform .2s;
+  }
+
+  .slot.on svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .slot.pop svg {
+    animation: pop .35s cubic-bezier(.2, .9, .3, 1.2) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(.4);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .bicis {
+    display: grid;
+    grid-template-columns: repeat(6, auto);
+    gap: 6px;
+    justify-content: start;
+  }
+
+  .hand {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 26px;
+    flex-wrap: wrap;
+  }
+
+  .hand svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .codigo .ln {
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr) auto;
+    align-items: center;
+    white-space: pre;
+  }
+
+  .codigo .marks {
+    display: flex;
+    gap: 3px;
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+
+  .codigo .marks i {
+    width: 10px;
+    height: 10px;
+    display: block;
+    border-radius: 50%;
+    background: var(--who);
+  }
+
+  .salida {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .vuela {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 26px;
+    height: 26px;
+    pointer-events: none;
+    z-index: 60;
+  }
+
+  .vuela svg {
+    width: 26px;
+    height: 26px;
+    display: block;
+  }
+
+  .w-tejido {
+    --paper: #F9FBFD;
+    --grid: #DDE5EF;
+    --grid10: #BCCADB;
+    --ink: #182536;
+    --ink2: #475870;
+    --rueda: #B22D5E;
+    --marco: #1F7566;
+    --ens: #3243A3;
+    --bloq: #D08F00;
+    --bloq-bg: #FFF4D6;
+    --a-ru: var(--rueda);
+    --a-ma: var(--marco);
+    --a-mo: var(--ens);
+    background-color: var(--paper);
+    color: var(--ink);
+    background-image:
+      linear-gradient(var(--grid10) 1px, transparent 1px), linear-gradient(90deg, var(--grid10) 1px, transparent 1px),
+      linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 240px 240px, 240px 240px, 24px 24px, 24px 24px;
+    background-position: -1px -1px;
+    font-family: "Archivo", system-ui, sans-serif;
+    border: 1px solid var(--grid10);
+  }
+
+  .w-tejido .sk-top b {
+    font-weight: 800;
+    font-stretch: 118%;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+  }
+
+  .w-tejido .sk-top span {
+    font-family: "Martian Mono", monospace;
+    font-size: .78rem;
+    color: var(--ink2);
+  }
+
+  .w-tejido h5 {
+    margin: 0;
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-weight: 700;
+    color: var(--ink2);
+    font-stretch: 112%;
+  }
+
+  .w-tejido .act {
+    background: #fff;
+    border: 1px solid var(--grid10);
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 2px 10px;
+    align-items: center;
+  }
+
+  .w-tejido .act .ovi {
+    grid-row: span 3;
+    width: 34px;
+    height: 34px;
+    color: var(--who);
+  }
+
+  .w-tejido .act b {
+    font-weight: 800;
+    font-stretch: 105%;
+    font-size: 1.02rem;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .w-tejido .act .st {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: 1px 6px;
+    color: var(--ink2);
+    border: 1px solid var(--grid10);
+  }
+
+  .w-tejido .act[data-kind="work"] .st {
+    color: var(--marco);
+    border-color: currentColor;
+  }
+
+  .w-tejido .act[data-kind="mon"] .st {
+    color: var(--ens);
+    border-color: currentColor;
+  }
+
+  .w-tejido .act[data-kind="wait"] {
+    background: var(--bloq-bg);
+    outline: 2px solid var(--bloq);
+    outline-offset: -1px;
+  }
+
+  .w-tejido .act[data-kind="wait"] .st {
+    background: var(--bloq);
+    color: #fff;
+    border-color: var(--bloq);
+  }
+
+  .w-tejido .act .es {
+    font-size: .88rem;
+  }
+
+  .w-tejido .act code {
+    font-family: "Martian Mono", monospace;
+    font-size: .76rem;
+    color: var(--ink2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .w-tejido .act .pg {
+    grid-column: 2;
+    font-family: "Martian Mono", monospace;
+    font-size: .76rem;
+    color: var(--ink2);
+  }
+
+  .w-tejido .cesto {
+    background: #fff;
+    border: 1px solid var(--grid10);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .w-tejido .cesto.lleno {
+    outline: 2px solid var(--ink);
+    outline-offset: -1px;
+  }
+
+  .w-tejido .cesto-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .w-tejido .cesto-h b {
+    font-weight: 800;
+    font-stretch: 110%;
+  }
+
+  .w-tejido .cesto-h span {
+    font-family: "Martian Mono", monospace;
+    font-size: .8rem;
+  }
+
+  .w-tejido .slot {
+    width: 38px;
+    height: 48px;
+    border: 1px solid var(--grid10);
+    align-content: start;
+    padding-top: 4px;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 11px 11px;
+  }
+
+  .w-tejido .slot svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* número de pieza guardada y punteros i / j del arreglo circular */
+  .w-tejido .slot .num {
+    position: absolute;
+    bottom: 1px;
+    right: 3px;
+    font-family: "Martian Mono", monospace;
+    font-size: .62rem;
+    color: var(--ink2);
+  }
+
+  .w-tejido .slot .ptr {
+    position: absolute;
+    bottom: -17px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: "Martian Mono", monospace;
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--ens);
+  }
+
+  .w-tejido .cesto .slots {
+    padding-bottom: 16px;
+    row-gap: 22px;
+  }
+
+  .w-tejido .bicis .slot {
+    width: 48px;
+    height: 44px;
+    padding-top: 0;
+    align-content: center;
+  }
+
+  .w-tejido .bicis .slot svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .w-tejido .hand {
+    font-size: .8rem;
+    color: var(--ink2);
+  }
+
+  .w-tejido .sync-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .w-tejido .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border: 1.5px solid var(--who);
+    color: var(--who);
+    background: #fff;
+  }
+
+  .w-tejido .mon-blk {
+    background: #fff;
+    border: 1px solid var(--grid10);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .w-tejido .rep {
+    border: 3px solid var(--ink);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .w-tejido .rep-t {
+    font-family: "Martian Mono", monospace;
+    font-size: .74rem;
+    font-weight: 600;
+  }
+
+  .w-tejido .zona {
+    display: grid;
+    grid-template-columns: 8.6em minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    min-height: 26px;
+    font-size: .8rem;
+    color: var(--ink2);
+  }
+
+  .w-tejido .zona>div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .w-tejido .codigo {
+    background: #fff;
+    border: 1px solid var(--grid10);
+    font-family: "Martian Mono", monospace;
+    font-size: .78rem;
+    line-height: 1.95;
+    padding: 6px 0;
+    overflow-x: auto;
+  }
+
+  .w-tejido .codigo .ln.h {
+    color: var(--ink2);
+    font-style: italic;
+  }
+
+  .w-tejido .codigo .ln.act-l {
+    background: #EEF2FA;
+  }
+
+  .w-tejido .codigo .rn {
+    color: var(--ink2);
+    padding: 0 10px;
+    border-left: 1px solid var(--grid);
+    text-align: right;
+  }
+
+  .w-tejido .salida {
+    background: #fff;
+    border: 1px solid var(--grid10);
+    font-family: "Martian Mono", monospace;
+    font-size: .78rem;
+    line-height: 1.7;
+    padding: 10px 12px;
+    min-height: 13em;
+  }
+
+  .w-tejido .salida .warn {
+    color: #8A5A00;
+    background: var(--bloq-bg);
+  }
+
+  .w-tejido .salida .nota {
+    color: var(--ink2);
+    font-style: italic;
+  }
+
+  .w-tejido .salida .fin {
+    color: var(--marco);
+    font-weight: 600;
+  }
+
+  .w-tejido .hilo {
+    fill: none;
+    stroke: var(--bloq);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 1 7;
+  }
+
+  .w-tejido .hilo-pt {
+    fill: var(--bloq);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slot.pop svg {
+      animation: none;
+    }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Fábrica de bicicletas</h1>
+    <p class="enunciado">Ejercicio resuelto 10.5 (pág. 363): Tenemos un taller dedicado a hacer jerseys. En su interior tenemos a tres
+      personas trabajando. Una persona está continuamente fabricando mangas, que va depositando en un cesto. El cesto
+      tiene una capacidad limitada: cuando se llena, la costurera deja de coser más mangas hasta que hay hueco libre.
+      Otra persona está continuamente fabricando los cuerpos de los jerseys, que también deposita en su correspondiente
+      cesta de capacidad limitada. Una tercera persona se encarga continuamente de ensamblar jerseys, cogiendo en cada
+      caso dos mangas de la cesta de mangas y un cuerpo de la cesta de cuerpos. Se trata de escribir el código que
+      sincronice a estas tres personas, de forma que las dos primeras personas no avancen si su cesta está llena, y que
+      la tercera persona no avance si le faltan piezas para hacer un nuevo jersey. Se supone que las capacidades de las
+      dos cestas son constantes y distintas (supongan, por ejemplo, que son dos constantes enteras «NumMaxMangas» y
+      «NumMaxCuerpos»).</p>
+    
+  </header>
+
+  <div class="ctl" role="toolbar" aria-label="Controles de la animación">
+    <div class="g"><button type="button" class="btn pri" id="btnPlay">Pausar</button><button type="button" class="btn"
+        id="btnReset">Reiniciar</button></div>
+    <div class="g"><span class="lbl">Velocidad</span>
+      <div class="seg" id="segVel"><button type="button" data-vel="0.5" aria-pressed="false">½×</button><button
+          type="button" data-vel="1" aria-pressed="true">1×</button><button type="button" data-vel="2"
+          aria-pressed="false">2×</button><button type="button" data-vel="4" aria-pressed="false">4×</button></div>
+    </div>
+    <div class="g"><label class="lbl" for="ritmo">Montador</label><input type="range" id="ritmo" min="1" max="5"
+        step="1" value="4"><span class="ritmo-txt" id="ritmoTxt">lento</span></div>
+  </div>
+
+  <div class="escena">
+    <div class="sk w-tejido" id="escena"></div>
+  </div>
+
+  <section class="clave" aria-label="Código clave del monitor">
+    <div class="clave-cod">
+      <pre id="claveCod"></pre>
+    </div>
+    <div class="clave-notas">
+      <h3>Código</h3>
+      <ol>
+        <li><span class="mk">1</span><span><code>synchronized</code> hace de cada <code>Buffer</code> un monitor. Hay
+            dos instancias, ruedas y marcos, y cada una tiene su propio candado: el operario de ruedas no frena al de
+            marcos.</span></li>
+        <li><span class="mk w">2</span><span><code>while (…) wait();</code> es la condición de espera: almacén lleno
+            para el operario, piezas insuficientes para el montador. Va con <code>while</code> porque al despertar hay
+            que volver a revisar.</span></li>
+        <li><span class="mk">3</span><span><code>notifyAll()</code> avisa que el almacén cambió, así el que esperaba
+            vuelve a probar.</span></li>
+        <li><span class="mk">4</span><span><code>extraer(n)</code> saca las n piezas <b>en una sola operación</b>: las 2
+            ruedas salen juntas. El arreglo circular con <code>i</code> y <code>j</code> respeta el orden de
+            llegada.</span></li>
+        <li><span class="mk">5</span><span>Son dos monitores, así que el montador primero saca las ruedas y después el
+            marco: puede quedarse esperando el marco con las ruedas en la mano. Con un solo montador no es un
+            problema.</span></li>
+      </ol>
+      <p class="pie">Versión resumida: el archivo real además imprime cada paso y declara
+        <code>throws InterruptedException</code>.</p>
+    </div>
+  </section>
+
+  <section class="explica">
+    <div class="panel">
+      <h3>Cómo funciona</h3>
+      <p>Cada almacén es un productor-consumidor con buffer acotado, igual que en el proyecto del drive, pero
+        sincronizado con un monitor en lugar de semáforos.</p>
+      <ul>
+        <li>El operario llama a <code>poner()</code>. Si el almacén está lleno (10 ruedas o 4 marcos), hace
+          <code>wait()</code>: suelta el monitor y duerme.</li>
+        <li>El montador llama a <code>extraer(2)</code> en ruedas y <code>extraer(1)</code> en marcos. Si no alcanzan
+          las piezas, hace <code>wait()</code>.</li>
+        <li>Después de cada cambio, <code>notifyAll()</code> despierta al que esperaba y este vuelve a revisar su
+          condición.</li>
+      </ul>
+      <p>Con el montador lento, el almacén de marcos (capacidad 4) se llena primero y el operario de
+        marcos queda en <code>wait()</code>. Los números debajo de las piezas muestran cómo avanzan <code>i</code>
+        (donde se pone) y <code>j</code> (de donde se saca), dando la vuelta al arreglo.</p>
+    </div>
+    <div class="panel">
+      <h3>Por qué monitor y no semáforos</h3>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Semáforos</th>
+              <th>Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclusión mutua</td>
+              <td>A mano, con un <code>mutex</code> por almacén (P al entrar, V al salir)</td>
+              <td>Automática, con <code>synchronized</code></td>
+            </tr>
+            <tr>
+              <td>Esperar lugar o piezas</td>
+              <td>Semáforos contadores <code>hayEspacio</code> / <code>hayDatos</code></td>
+              <td><code>while (condición) wait();</code></td>
+            </tr>
+            <tr>
+              <td>Avisar que algo cambió</td>
+              <td><code>V()</code> sobre el semáforo que corresponde</td>
+              <td><code>notifyAll()</code>, y cada uno revisa su condición</td>
+            </tr>
+            <tr>
+              <td>Sacar 2 ruedas</td>
+              <td>Dos <code>P(hayDatos)</code> separados: con dos montadores, cada uno podría quedarse con una rueda y
+                trabarse</td>
+              <td>Un solo <code>extraer(2)</code>: las 2 ruedas salen juntas</td>
+            </tr>
+            <tr>
+              <td>Error típico</td>
+              <td>Invertir el orden de los P, u olvidar un V</td>
+              <td>Usar <code>if</code> en lugar de <code>while</code></td>
+            </tr>
+          </tbody>
+        </table>
+  </section>
+</div>
+
+<script>
+  (() => {
+    "use strict";
+    const MAX_R = 10, MAX_MA = 4, N_B = 6, STEP = 260, CS = 450, PROD = [500, 1100];
+    const RITMOS = { 1: [[300, 600], "muy rápido"], 2: [[700, 1200], "rápido"], 3: [[1300, 2000], "parejo"], 4: [[2200, 3200], "lento"], 5: [[3600, 5000], "muy lento"] };
+    const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const $ = id => document.getElementById(id);
+    const ritmoMon = () => RITMOS[$("ritmo").value][0];
+    let vel = 1, jugando = true;
+
+    // Líneas de Buffer que recorre la animación (las mismas de FabricaBicicletas.java, resumidas).
+    const CODE = [
+      { h: "// Buffer.poner(): operarios" },
+      { id: "e1", s: "synchronized void poner(pieza) {" },
+      { id: "c1", s: "  while (cantidad == b.length)" },
+      { id: "c2", s: "    wait();" },
+      { id: "c3", s: "  b[i] = pieza;  i = (i+1) % b.length;" },
+      { id: "c4", s: "  cantidad++;  notifyAll();" },
+      { id: "x1", s: "}" },
+      { h: "// Buffer.extraer(n): montador" },
+      { id: "e2", s: "synchronized int[] extraer(n) {" },
+      { id: "k1", s: "  while (cantidad < n)" },
+      { id: "k2", s: "    wait();" },
+      { id: "k3", s: "  n veces: b[j];  j = (j+1) % b.length;" },
+      { id: "k4", s: "  cantidad -= n;  notifyAll();" },
+      { id: "x2", s: "}" },
+      { h: "// fuera del monitor" },
+      { id: "w1", s: "trabajar();" }
+    ];
+    const lineaTexto = id => (CODE.find(l => l.id === id) || {}).s || "";
+
+    // ================= MOTOR =================
+    // Corrutinas (generadores) que imitan los hilos de Java. Cada almacén es un monitor
+    // con su dueño, su cola de entrada y su conjunto de espera (wait).
+    function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+    function crearSim(seed, emit) {
+      const rng = mulberry32(seed), rnd = ([a, b]) => a + rng() * (b - a);
+      const almacen = (nombre, max) => ({ nombre, max, b: Array(max).fill(null), i: 0, j: 0, n: 0, mon: { owner: null, entrada: [], espera: [] } });
+      const sim = { now: 0, bicis: 0, fin: false, logs: [], almacenes: { ruedas: almacen("ruedas", MAX_R), marcos: almacen("marcos", MAX_MA) } };
+      const R = sim.almacenes.ruedas, MA = sim.almacenes.marcos;
+      const log = (texto, tipo) => { sim.logs.push({ texto, tipo }); if (sim.logs.length > 200) sim.logs.shift(); };
+      const dormir = (a, ms, estado, kind) => { a.state = "sleeping"; a.until = sim.now + ms; if (estado) a.estado = estado; if (kind) a.kind = kind; };
+      function liberar(alm) {
+        const m = alm.mon; m.owner = null; const nx = m.entrada.shift();
+        if (nx) { m.owner = nx; dormir(nx, STEP, `entra al monitor de ${alm.nombre}`, "mon"); }
+      }
+      function ejecutar(a, c) {
+        if (c.ln) a.ln = c.ln;
+        const alm = c.alm, m = alm && alm.mon;
+        switch (c.t) {
+          case "sleep": dormir(a, c.ms, c.estado, c.kind); break;
+          case "enter":
+            if (!m.owner) { m.owner = a; dormir(a, STEP, `entra al monitor de ${alm.nombre}`, "mon"); }
+            else { m.entrada.push(a); a.state = "blocked"; a.kind = "wait"; a.estado = `espera para entrar al monitor de ${alm.nombre}`; }
+            break;
+          case "wait": m.espera.push(a); a.state = "blocked"; a.kind = "wait"; a.estado = `wait() en ${alm.nombre}: duerme y suelta el monitor`; liberar(alm); break;
+          case "notifyAll": {
+            const ws = m.espera.splice(0);
+            ws.forEach(w => { w.estado = "despertado: espera para volver a entrar"; m.entrada.push(w); });
+            if (ws.length) log(`    · notifyAll() en ${alm.nombre} despierta a: ${ws.map(w => w.logName).join(", ")}`, "nota");
+            dormir(a, STEP, "notifyAll()", "mon"); break;
+          }
+          case "exit": liberar(alm); a.estado = `sale del monitor de ${alm.nombre}`; a.kind = "work"; break;
+        }
+      }
+      function correr(a) {
+        let g = 0;
+        while (a.state === "ready" && g++ < 50) {
+          const r = a.gen.next();
+          if (r.done) { a.state = "done"; a.kind = "done"; a.estado = "terminó"; a.ln = null; break; }
+          ejecutar(a, r.value);
+        }
+      }
+
+      // Operario.run() + Buffer.poner()
+      function* operario(a, alm, total, art, pieza) {
+        for (let n = 1; n <= total; n++) {
+          yield { t: "sleep", ms: rnd(PROD), ln: "w1", estado: `fabrica ${art} ${n}`, kind: "work" };
+          log(`${a.logName} termina ${art} ${n}`);
+          yield { t: "enter", alm, ln: "e1" };
+          yield { t: "sleep", ms: STEP, ln: "c1", estado: "revisa si el almacén está lleno", kind: "mon" };
+          while (alm.n === alm.max) {
+            log(`    almacén de ${alm.nombre} lleno: ${a.logName} espera`, "warn");
+            yield { t: "wait", alm, ln: "c2" };
+            yield { t: "sleep", ms: STEP, ln: "c1", estado: "vuelve a revisar la condición", kind: "mon" };
+          }
+          yield { t: "sleep", ms: CS, ln: "c3", estado: `deja ${art} ${n} en b[${alm.i}]`, kind: "mon" };
+          const idx = alm.i; alm.b[idx] = n; alm.i = (alm.i + 1) % alm.max;
+          emit({ type: "deja", alm: alm.nombre, idx, actor: a.id, pieza });
+          yield { t: "sleep", ms: STEP, ln: "c4", estado: "cantidad++", kind: "mon" };
+          alm.n++; a.hechas = n;
+          log(`    almacén de ${alm.nombre} recibe 1, hay ${alm.n}/${alm.max}`);
+          yield { t: "notifyAll", alm, ln: "c4" };
+          yield { t: "exit", alm, ln: "x1" };
+        }
+      }
+      // Buffer.extraer(n)
+      function* extraer(a, alm, cuantas, pieza) {
+        yield { t: "enter", alm, ln: "e2" };
+        yield { t: "sleep", ms: STEP, ln: "k1", estado: `revisa si hay ${cuantas} ${alm.nombre}`, kind: "mon" };
+        while (alm.n < cuantas) {
+          log(`    faltan ${alm.nombre} (hay ${alm.n}, necesita ${cuantas}): montador espera`, "warn");
+          yield { t: "wait", alm, ln: "k2" };
+          yield { t: "sleep", ms: STEP, ln: "k1", estado: "vuelve a revisar la condición", kind: "mon" };
+        }
+        yield { t: "sleep", ms: CS, ln: "k3", estado: `saca ${cuantas} desde b[${alm.j}]`, kind: "mon" };
+        const idxs = [], nums = [];
+        for (let k = 0; k < cuantas; k++) { idxs.push(alm.j); nums.push(alm.b[alm.j]); alm.b[alm.j] = null; alm.j = (alm.j + 1) % alm.max; }
+        a.hand[pieza].push(...nums);
+        emit({ type: "saca", alm: alm.nombre, idxs, pieza });
+        alm.n -= cuantas;
+        log(`    almacén de ${alm.nombre} entrega ${cuantas}, hay ${alm.n}/${alm.max}`);
+        yield { t: "notifyAll", alm, ln: "k4" };
+        yield { t: "exit", alm, ln: "x2" };
+      }
+      // Montador.run()
+      function* montador(a) {
+        for (let n = 1; n <= N_B; n++) {
+          yield* extraer(a, R, 2, "rueda");
+          yield* extraer(a, MA, 1, "marco");
+          yield { t: "sleep", ms: rnd(ritmoMon()), ln: "w1", estado: `monta la bici ${n}`, kind: "work" };
+          const r = a.hand.rueda, m = a.hand.marco;
+          log(`montador termina la bici ${n} (ruedas ${r[0]} y ${r[1]}, marco ${m[0]})`);
+          a.hand = { rueda: [], marco: [] }; sim.bicis = n;
+          emit({ type: "bici", n });
+        }
+      }
+
+      const mk = (id, nombre, logName) => ({ id, nombre, logName, state: "ready", until: 0, ln: null, estado: "", kind: "work", hechas: 0, hand: { rueda: [], marco: [] } });
+      const ru = mk("ru", "Operario de ruedas", "operario de ruedas"), ma = mk("ma", "Operario de marcos", "operario de marcos"), mo = mk("mo", "Montador", "montador");
+      ru.gen = operario(ru, R, 2 * N_B, "la rueda", "rueda");
+      ma.gen = operario(ma, MA, N_B, "el marco", "marco");
+      mo.gen = montador(mo);
+      sim.actores = [ru, ma, mo];
+      sim.arrancar = () => sim.actores.forEach(correr);
+      sim.avanzar = dt => {
+        let resto = dt;
+        while (resto > 0 && !sim.fin) {
+          const paso = Math.min(25, resto); resto -= paso; sim.now += paso;
+          for (let v = 0; v < 6; v++) {
+            let algo = false;
+            for (const a of sim.actores) if (a.state === "sleeping" && a.until <= sim.now) { a.state = "ready"; algo = true; correr(a); }
+            if (!algo) break;
+          }
+          if (sim.actores.every(a => a.state === "done")) { sim.fin = true; log(`Fin: se fabricaron ${N_B} bicicletas`, "fin"); }
+        }
+      };
+      // ¿En qué está esperando un hilo bloqueado? Devuelve la clave del lugar (para dibujar el hilo).
+      sim.bloqueo = a => {
+        if (a.state !== "blocked") return null;
+        for (const alm of Object.values(sim.almacenes)) {
+          if (alm.mon.entrada.includes(a)) return `${alm.nombre}-entrada`;
+          if (alm.mon.espera.includes(a)) return `${alm.nombre}-espera`;
+        }
+        return null;
+      };
+      return sim;
+    }
+
+    // ================= ÍCONOS =================
+    const ICON = {
+      rueda: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M12 4v16M4 12h16M6.3 6.3l11.4 11.4M17.7 6.3 6.3 17.7" stroke="currentColor" stroke-width="1.1"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>',
+      marco: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 17 11 17 9 8ZM11 17 17 8M9 8h8M17 8l3.5 9M9 8 8.4 5.2H6M17 8l-.8-3.2h2.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+      bici: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="18.5" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 16h6L9.6 9.5ZM11.5 16l4.8-6.5M9.6 9.5h6.7M16.3 9.5l2.2 6.5M9.6 9.5 9 7.4H7.2M16.3 9.5l-.6-2.4h2.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+      ovillo: '<svg class="ovi" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="14" fill="currentColor"/><path d="M6 12c6 2 14 1 22-3M5 19c8 3 17 2 24-4M8 25c6 2 13 1 19-4M13 4c-3 7-3 18 1 27M21 4c-4 8-4 18 0 26" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4"/></svg>'
+    };
+    const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const KIND = { work: "trabajando", mon: "en el monitor", wait: "bloqueado", done: "terminó" };
+    const PIEZA = { ruedas: "rueda", marcos: "marco" };
+
+    // ================= CÓDIGO CLAVE (estático) =================
+    (() => {
+      const KW = t => `<span class="kw">${t}</span>`, CM = t => `<span class="cm">${t}</span>`;
+      const L = (code, mk = "", cls = "") => `<span class="${("l " + cls).trim()}"><i>${mk ? `<span class="mk${cls.includes("w") ? " w" : ""}">${mk}</span>` : ""}</i><span>${code}</span></span>`;
+      $("claveCod").innerHTML = [
+        L(`${KW("class")} Buffer {`),
+        L(`    ${KW("private int")}[] b;              ${CM("// arreglo circular")}`),
+        L(`    ${KW("private int")} i = 0, j = 0, cantidad = 0;`),
+        L(" "),
+        L(`    ${KW("synchronized void")} poner(${KW("int")} pieza) {`, "1", "k"),
+        L(`        ${KW("while")} (cantidad == b.length)`, "2", "k w"),
+        L("            wait();", "", "k w"),
+        L("        b[i] = pieza;  i = (i + 1) % b.length;"),
+        L("        cantidad++;"),
+        L("        notifyAll();", "3", "k"),
+        L("    }"),
+        L(" "),
+        L(`    ${KW("synchronized int")}[] extraer(${KW("int")} n) {`, "1", "k"),
+        L(`        ${KW("while")} (cantidad &lt; n)`, "2", "k w"),
+        L("            wait();", "", "k w"),
+        L(`        ${KW("for")} (k = 0; k &lt; n; k++) { piezas[k] = b[j];  j = (j + 1) % b.length; }`, "4", "k"),
+        L("        cantidad -= n;", "", "k"),
+        L("        notifyAll();", "3", "k"),
+        L(`        ${KW("return")} piezas;`),
+        L("    }"),
+        L("}"),
+        L(" "),
+        L(CM("// Montador.run(), por cada bici:")),
+        L("ruedas.extraer(2);", "5", "k"),
+        L("marcos.extraer(1);", "", "k")
+      ].join("");
+    })();
+
+    // ================= ESCENA =================
+    function crearEscena(root) {
+      const actorHtml = (id, nombre) =>
+        `<div class="act" data-actor="${id}" style="--who: var(--a-${id})">${ICON.ovillo}<b>${nombre}<span class="st"></span></b><span class="es"></span><code></code>${id !== "mo" ? '<span class="pg"></span>' : ""}</div>`;
+      const almHtml = (n, titulo) => `<div class="cesto" data-alm="${n}"><div class="cesto-h"><b>${titulo}</b><span data-r="cnt"></span></div><div class="slots"></div></div>`;
+      root.innerHTML = `
+      <svg class="sk-threads" aria-hidden="true"></svg>
+      <div class="sk-top"><b>Patrón: fábrica de bicicletas</b><span>solución con monitor</span><span data-r="time"></span></div>
+      <div class="sk-floor">
+        <div class="sk-col"><h5>Operarios</h5>${actorHtml("ru", "Operario de ruedas")}${actorHtml("ma", "Operario de marcos")}</div>
+        <div class="sk-col"><h5>Almacenes (Buffer)</h5>${almHtml("ruedas", "Ruedas")}${almHtml("marcos", "Marcos")}</div>
+        <div class="sk-col"><h5>Montaje</h5>${actorHtml("mo", "Montador")}<div class="hand" data-r="hand"></div><h5>Bicis terminadas</h5><div class="bicis" data-r="bicis"></div></div>
+      </div>
+      <div class="sk-low">
+        <div class="sk-col"><h5>Monitores</h5><div class="sync-box" data-r="sync"></div></div>
+        <div class="sk-col"><h5>Filas del patrón (código)</h5><div class="codigo" data-r="code"></div></div>
+        <div class="sk-col"><h5>Notas del patrón (salida)</h5><pre class="salida" data-r="log"></pre></div>
+      </div>`;
+      const q = s => root.querySelector(s);
+      const actorEl = id => q(`[data-actor="${id}"]`);
+      const almEl = n => q(`[data-alm="${n}"]`);
+      const slotEl = (n, i) => almEl(n).querySelectorAll(".slot")[i];
+      const biciEl = n => q('[data-r="bicis"]').querySelectorAll(".slot")[n - 1];
+      const svg = q(".sk-threads");
+      const color = v => getComputedStyle(root).getPropertyValue(v).trim();
+      let prevB = {}, popDelay = {}, bPrev = 0, bDelay = 0, logLen = -1;
+
+      function volar(desde, hacia, pieza) {
+        if (reducir || !desde || !hacia) return 0;
+        const dur = Math.max(160, 560 / Math.max(1, vel));
+        const a = desde.getBoundingClientRect(), b = hacia.getBoundingClientRect();
+        if (a.bottom < 0 || a.top > innerHeight + 200) return 0;
+        const el = document.createElement("div"); el.className = "vuela"; el.innerHTML = ICON[pieza];
+        el.style.color = color(pieza === "bici" ? "--ens" : "--" + pieza);
+        document.body.appendChild(el);
+        const ax = a.left + a.width / 2 - 13, ay = a.top + a.height / 2 - 13, bx = b.left + b.width / 2 - 13, by = b.top + b.height / 2 - 13;
+        el.animate([
+          { transform: `translate(${ax}px,${ay}px) scale(.7)`, opacity: .5 },
+          { transform: `translate(${(ax + bx) / 2}px,${Math.min(ay, by) - 36}px) scale(1.2)`, opacity: 1, offset: .5 },
+          { transform: `translate(${bx}px,${by}px) scale(1)`, opacity: 1 }
+        ], { duration: dur, easing: "cubic-bezier(.45,0,.25,1)" }).onfinish = () => el.remove();
+        return dur;
+      }
+
+      function syncHtml(sim) {
+        const chip = a => `<span class="chip" style="--who: var(--a-${a.id})">${a.nombre}</span>`;
+        const lista = arr => arr.length ? arr.map(chip).join("") : "<span>nadie</span>";
+        return Object.values(sim.almacenes).map(alm => {
+          const m = alm.mon;
+          return `<div class="mon-blk">
+          <div class="zona" data-t="${alm.nombre}-entrada"><span>Esperan para entrar</span><div>${lista(m.entrada)}</div></div>
+          <div class="rep"><span class="rep-t">monitor ${alm.nombre} · cantidad ${alm.n}/${alm.max}</span>
+            <div class="zona"><span>Adentro</span><div>${m.owner ? chip(m.owner) : "<span>libre</span>"}</div></div>
+            <div class="zona" data-t="${alm.nombre}-espera"><span>En wait()</span><div>${lista(m.espera)}</div></div>
+          </div></div>`;
+        }).join("");
+      }
+
+      return {
+        reset(sim) {
+          for (const alm of Object.values(sim.almacenes)) {
+            almEl(alm.nombre).querySelector(".slots").innerHTML = Array.from({ length: alm.max }, () => `<div class="slot">${ICON[PIEZA[alm.nombre]]}<span class="num"></span><span class="ptr"></span></div>`).join("");
+            prevB[alm.nombre] = Array(alm.max).fill(null); popDelay[alm.nombre] = 0;
+          }
+          q('[data-r="bicis"]').innerHTML = Array.from({ length: N_B }, () => `<div class="slot">${ICON.bici}</div>`).join("");
+          q('[data-r="code"]').innerHTML = CODE.map((l, i) => l.h
+            ? `<div class="ln h"><span class="marks"></span><code>${esc(l.h)}</code><span class="rn"></span></div>`
+            : `<div class="ln" data-id="${l.id}"><span class="marks"></span><code>${esc(l.s)}</code><span class="rn">${i + 1}</span></div>`).join("");
+          q('[data-r="sync"]').dataset.html = ""; q('[data-r="hand"]').dataset.html = "";
+          q('[data-r="log"]').textContent = "";
+          bPrev = 0; bDelay = 0; logLen = -1;
+        },
+        onEvent(e) {
+          if (e.type === "deja") popDelay[e.alm] = volar(actorEl(e.actor), slotEl(e.alm, e.idx), e.pieza);
+          else if (e.type === "saca") e.idxs.forEach(i => volar(slotEl(e.alm, i), q('[data-r="hand"]'), e.pieza));
+          else if (e.type === "bici") bDelay = volar(actorEl("mo"), biciEl(e.n), "bici");
+        },
+        render(sim) {
+          q('[data-r="time"]').textContent = `t = ${(sim.now / 1000).toFixed(1).replace(".", ",")} s · ${sim.bicis}/${N_B} bicis`;
+          for (const a of sim.actores) {
+            const el = actorEl(a.id);
+            el.dataset.kind = a.kind;
+            el.querySelector(".st").textContent = KIND[a.kind];
+            el.querySelector(".es").textContent = a.estado;
+            el.querySelector("code").textContent = a.ln ? lineaTexto(a.ln) : "—";
+            const pg = el.querySelector(".pg");
+            if (pg) pg.textContent = a.id === "ru" ? `ruedas ${a.hechas}/${2 * N_B}` : `marcos ${a.hechas}/${N_B}`;
+          }
+          const mo = sim.actores[2];
+          const h = [...mo.hand.rueda.map(n => `<span style="color:var(--rueda)" title="rueda ${n}">${ICON.rueda}</span>`), ...mo.hand.marco.map(n => `<span style="color:var(--marco)" title="marco ${n}">${ICON.marco}</span>`)];
+          const handHtml = "en la mano: " + (h.length ? h.join("") : "nada");
+          const hand = q('[data-r="hand"]'); if (hand.dataset.html !== handHtml) { hand.innerHTML = handHtml; hand.dataset.html = handHtml; }
+
+          for (const alm of Object.values(sim.almacenes)) {
+            const box = almEl(alm.nombre);
+            box.querySelector('[data-r="cnt"]').textContent = `cantidad ${alm.n}/${alm.max}${alm.n === alm.max ? " · lleno" : ""}`;
+            box.classList.toggle("lleno", alm.n === alm.max);
+            box.querySelectorAll(".slot").forEach((s, k) => {
+              const v = alm.b[k], on = v !== null;
+              if (on && prevB[alm.nombre][k] !== v) { s.classList.add("pop"); s.style.setProperty("--d", (popDelay[alm.nombre] * .8) + "ms"); }
+              if (!on) s.classList.remove("pop");
+              s.classList.toggle("on", on);
+              s.style.color = `var(--${PIEZA[alm.nombre]})`;
+              s.querySelector(".num").textContent = on ? v : "";
+              const p = (k === alm.i ? "i" : "") + (k === alm.j ? (k === alm.i ? " j" : "j") : "");
+              s.querySelector(".ptr").textContent = p;
+            });
+            prevB[alm.nombre] = alm.b.slice();
+          }
+          q('[data-r="bicis"]').querySelectorAll(".slot").forEach((s, i) => {
+            const on = i < sim.bicis;
+            if (on && i >= bPrev) { s.classList.add("pop"); s.style.setProperty("--d", (bDelay * .8) + "ms"); }
+            s.classList.toggle("on", on);
+            s.style.color = "var(--ens)";
+          });
+          bPrev = sim.bicis;
+          const syncEl = q('[data-r="sync"]'), html = syncHtml(sim);
+          if (syncEl.dataset.html !== html) { syncEl.innerHTML = html; syncEl.dataset.html = html; }
+          q('[data-r="code"]').querySelectorAll(".ln[data-id]").forEach(ln => {
+            const quienes = sim.actores.filter(a => a.ln === ln.dataset.id && a.state !== "done");
+            const marks = quienes.map(a => `<i style="--who: var(--a-${a.id})" title="${a.nombre}"></i>`).join("");
+            const mk = ln.querySelector(".marks"); if (mk.dataset.html !== marks) { mk.innerHTML = marks; mk.dataset.html = marks; }
+            ln.classList.toggle("act-l", quienes.length > 0);
+          });
+          if (logLen !== sim.logs.length) {
+            q('[data-r="log"]').innerHTML = sim.logs.slice(-9).map(l => `<span class="${l.tipo || ""}">${esc(l.texto.trim() === l.texto ? l.texto : "  " + l.texto.trim())}</span>`).join("\n");
+            logLen = sim.logs.length;
+          }
+          // hilos: de cada bloqueado a lo que espera
+          const rb = root.getBoundingClientRect();
+          let paths = "";
+          for (const a of sim.actores) {
+            const k = sim.bloqueo(a); if (!k) continue;
+            const t = q(`[data-t="${k}"]`); if (!t) continue;
+            const r1 = actorEl(a.id).getBoundingClientRect(), r2 = t.getBoundingClientRect();
+            const x1 = r1.left + r1.width / 2 - rb.left, y1 = r1.bottom - rb.top;
+            const x2 = r2.left + Math.min(40, r2.width / 2) - rb.left, y2 = r2.top + Math.min(14, r2.height / 2) - rb.top;
+            const dy = Math.max(40, Math.abs(y2 - y1) * .5);
+            paths += `<path class="hilo" d="M${x1},${y1} C${x1},${y1 + dy} ${x2},${y2 - dy} ${x2},${y2}"/><circle class="hilo-pt" cx="${x2}" cy="${y2}" r="4.5"/>`;
+          }
+          if (svg.dataset.html !== paths) { svg.innerHTML = paths; svg.dataset.html = paths; }
+        }
+      };
+    }
+
+    // ================= ARMADO =================
+    const escena = crearEscena($("escena"));
+    let sim;
+    function reiniciar() {
+      sim = crearSim((Math.random() * 1e9) | 0, ev => escena.onEvent(ev));
+      escena.reset(sim);
+      sim.arrancar();
+      escena.render(sim);
+    }
+
+    let ultimo = null;
+    function cuadro(ts) {
+      if (ultimo === null) ultimo = ts;
+      const dt = Math.min(100, ts - ultimo); ultimo = ts;
+      if (jugando) sim.avanzar(dt * vel);
+      escena.render(sim);
+      $("btnPlay").textContent = sim.fin ? "Repetir" : (jugando ? "Pausar" : "Seguir");
+      requestAnimationFrame(cuadro);
+    }
+
+    const marcar = (seg, v) => seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.vel === String(v))));
+    $("segVel").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; vel = Number(b.dataset.vel); marcar($("segVel"), b.dataset.vel); });
+    $("btnPlay").addEventListener("click", () => { if (sim.fin) { jugando = true; reiniciar(); return; } jugando = !jugando; });
+    $("btnReset").addEventListener("click", () => { jugando = true; reiniciar(); });
+    const ritmoTxt = () => { $("ritmoTxt").textContent = RITMOS[$("ritmo").value][1]; };
+    $("ritmo").addEventListener("input", ritmoTxt);
+    document.addEventListener("keydown", ev => { if (ev.code === "Space" && !/INPUT|BUTTON|TEXTAREA|A/.test(document.activeElement.tagName)) { ev.preventDefault(); $("btnPlay").click(); } });
+
+    ritmoTxt();
+    reiniciar();
+    requestAnimationFrame(cuadro);
+  })();
+</script>
