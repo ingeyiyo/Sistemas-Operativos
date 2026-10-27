@@ -1,0 +1,1677 @@
+<meta charset="utf-8">
+<title>Taller de Jerseys</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Estilos de taller-jerseys.html: barra de control arriba, la escena (carta de tejido) a todo el ancho, después el código clave y las explicaciones. */
+:root {
+  --bg: #EEF1F5;
+  --surface: #FFFFFF;
+  --ink: #18212E;
+  --muted: #566173;
+  --line: #D3D9E2;
+  --accent: #33469F;
+  --f-ui: "Archivo", "Segoe UI", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1218;
+    --surface: #161C25;
+    --ink: #E4E8EF;
+    --muted: #98A2B3;
+    --line: #2A3240;
+    --accent: #9AA9F2;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0E1218;
+  --surface: #161C25;
+  --ink: #E4E8EF;
+  --muted: #98A2B3;
+  --line: #2A3240;
+  --accent: #9AA9F2;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 56px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+header h1 {
+  font-weight: 800;
+  font-stretch: 112%;
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  max-width: 72ch;
+}
+
+header p.enunciado {
+  max-width: none;
+  color: var(--ink);
+  margin-top: 10px;
+}
+
+.ctl {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 18px -12px rgba(10, 20, 40, .35);
+}
+
+.g {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.g>.lbl {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.seg button {
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.seg button:last-child {
+  border-right: 0;
+}
+
+.seg button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 700;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn.pri {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+  min-width: 7.2em;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+  width: 120px;
+}
+
+.ritmo-txt {
+  font-size: .85rem;
+  color: var(--muted);
+  min-width: 5.5em;
+}
+
+.saltar {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  font-size: .9rem;
+  flex-wrap: wrap;
+}
+
+.saltar a {
+  color: var(--accent);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.estilo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-margin-top: 90px;
+}
+
+.estilo>h2 {
+  margin: 0;
+  font-weight: 800;
+  font-stretch: 108%;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.015em;
+}
+
+.estilo>.tesis {
+  margin: 0;
+  max-width: 78ch;
+  color: var(--ink);
+}
+
+.estilo>.riesgo {
+  margin: 0;
+  max-width: 78ch;
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+.estilo>.riesgo b {
+  color: var(--ink);
+}
+
+.escena {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.explica {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+
+/* Código clave: el monitor real, con marcas numeradas que remiten a las notas */
+.clave {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  border-radius: 14px;
+  overflow: hidden;
+  --grid: #DDE5EF;
+  --grid10: #BCCADB;
+  --k-ink: #182536;
+  --k-ink2: #475870;
+  --k-ens: #3243A3;
+  --k-bloq: #D08F00;
+  --k-bloq-bg: #FFF4D6;
+  background: #fff;
+  color: var(--k-ink);
+  border: 1px solid var(--grid10);
+}
+
+@media (max-width: 900px) {
+  .clave {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.clave-cod {
+  background-color: #F9FBFD;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  padding: 18px 0;
+  overflow-x: auto;
+  border-right: 1px solid var(--grid10);
+}
+
+.clave-cod pre {
+  margin: 0;
+  font-family: "Martian Mono", monospace;
+  font-size: .86rem;
+  line-height: 1.85;
+}
+
+.clave-cod .l {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  padding-right: 16px;
+}
+
+.clave-cod .l>i {
+  font-style: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clave-cod .l.k {
+  background: rgba(50, 67, 163, .08);
+}
+
+.clave-cod .l.k.w {
+  background: var(--k-bloq-bg);
+}
+
+.clave-cod .kw {
+  color: var(--k-ens);
+  font-weight: 600;
+}
+
+.clave-cod .cm {
+  color: var(--k-ink2);
+  font-style: italic;
+}
+
+.mk {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--k-ens);
+  color: #fff;
+  font-family: "Martian Mono", monospace;
+  font-size: .72rem;
+  font-weight: 600;
+  flex: none;
+}
+
+.mk.w {
+  background: var(--k-bloq);
+  color: #1B1300;
+}
+
+.clave-notas {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.clave-notas h3 {
+  margin: 0;
+  font-weight: 800;
+  font-stretch: 108%;
+  font-size: 1.2rem;
+}
+
+.clave-notas ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clave-notas li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.clave-notas code {
+  font-family: "Martian Mono", monospace;
+  font-size: .82em;
+  color: var(--k-ens);
+}
+
+.clave-notas .pie {
+  margin: 0;
+  color: var(--k-ink2);
+  font-size: .9rem;
+}
+
+.explica .panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.explica .panel.full {
+  grid-column: 1 / -1;
+}
+
+.explica h3 {
+  margin: 0 0 8px;
+  font-weight: 800;
+  font-stretch: 108%;
+  font-size: 1.2rem;
+}
+
+.explica p,
+.explica li {
+  max-width: 75ch;
+}
+
+.explica code,
+header code {
+  font-family: "Martian Mono", monospace;
+  font-size: .82em;
+}
+
+.tabla-wrap {
+  overflow-x: auto;
+}
+
+.explica table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 560px;
+}
+
+.explica th,
+.explica td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.explica thead th {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.explica tbody td:first-child {
+  font-weight: 700;
+}
+
+.nota-pie {
+  color: var(--muted);
+  font-size: .9rem;
+  margin: 12px 0 0;
+}
+
+/* ===== Esqueleto común de los mundos con DOM ===== */
+.sk {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+}
+
+.sk-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 16px;
+}
+
+.sk-floor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.sk-low {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+
+  .sk-floor,
+  .sk-low {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sk-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sk-threads {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 3;
+}
+
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.slot svg {
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity .2s, transform .2s;
+}
+
+.slot.on svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.slot.pop svg {
+  animation: pop .35s cubic-bezier(.2, .9, .3, 1.2) both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.jer {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 6px;
+  justify-content: start;
+}
+
+.jer .slot::after {
+  content: attr(data-n);
+  position: absolute;
+  font-size: .65rem;
+  bottom: 1px;
+  right: 4px;
+}
+
+.hand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 26px;
+  flex-wrap: wrap;
+}
+
+.hand svg {
+  width: 22px;
+  height: 22px;
+}
+
+.codigo .ln {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  align-items: center;
+  white-space: pre;
+}
+
+.codigo .marks {
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.codigo .marks i {
+  width: 10px;
+  height: 10px;
+  display: block;
+  border-radius: 50%;
+  background: var(--who);
+}
+
+.salida {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vuela {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.vuela svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+
+/* ===== 1 · Carta de tejido ===== */
+.w-tejido {
+  --paper: #F9FBFD;
+  --grid: #DDE5EF;
+  --grid10: #BCCADB;
+  --ink: #182536;
+  --ink2: #475870;
+  --manga: #B22D5E;
+  --cuerpo: #1F7566;
+  --ens: #3243A3;
+  --bloq: #D08F00;
+  --bloq-bg: #FFF4D6;
+  --a-cost: var(--manga);
+  --a-fab: var(--cuerpo);
+  --a-ens: var(--ens);
+  background-color: var(--paper);
+  color: var(--ink);
+  background-image:
+    linear-gradient(var(--grid10) 1px, transparent 1px), linear-gradient(90deg, var(--grid10) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 240px 240px, 240px 240px, 24px 24px, 24px 24px;
+  background-position: -1px -1px;
+  font-family: "Archivo", system-ui, sans-serif;
+  border: 1px solid var(--grid10);
+}
+
+.w-tejido .sk-top b {
+  font-weight: 800;
+  font-stretch: 118%;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+
+.w-tejido .sk-top span {
+  font-family: "Martian Mono", monospace;
+  font-size: .78rem;
+  color: var(--ink2);
+}
+
+.w-tejido h5 {
+  margin: 0;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-weight: 700;
+  color: var(--ink2);
+  font-stretch: 112%;
+}
+
+.w-tejido .act {
+  background: #fff;
+  border: 1px solid var(--grid10);
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 2px 10px;
+  align-items: center;
+}
+
+.w-tejido .act .ovi {
+  grid-row: span 3;
+  width: 34px;
+  height: 34px;
+  color: var(--who);
+}
+
+.w-tejido .act b {
+  font-weight: 800;
+  font-stretch: 105%;
+  font-size: 1.02rem;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.w-tejido .act .st {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 1px 6px;
+  color: var(--ink2);
+  border: 1px solid var(--grid10);
+}
+
+.w-tejido .act[data-kind="work"] .st {
+  color: var(--cuerpo);
+  border-color: currentColor;
+}
+
+.w-tejido .act[data-kind="sync"] .st,
+.w-tejido .act[data-kind="mon"] .st {
+  color: var(--ens);
+  border-color: currentColor;
+}
+
+.w-tejido .act[data-kind="wait"] {
+  background: var(--bloq-bg);
+  outline: 2px solid var(--bloq);
+  outline-offset: -1px;
+}
+
+.w-tejido .act[data-kind="wait"] .st {
+  background: var(--bloq);
+  color: #fff;
+  border-color: var(--bloq);
+}
+
+.w-tejido .act .es {
+  font-size: .88rem;
+}
+
+.w-tejido .act code {
+  font-family: "Martian Mono", monospace;
+  font-size: .76rem;
+  color: var(--ink2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.w-tejido .act .pg {
+  grid-column: 2;
+  font-family: "Martian Mono", monospace;
+  font-size: .76rem;
+  color: var(--ink2);
+}
+
+.w-tejido .cesto {
+  background: #fff;
+  border: 1px solid var(--grid10);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.w-tejido .cesto.lleno {
+  outline: 2px solid var(--ink);
+  outline-offset: -1px;
+}
+
+.w-tejido .cesto-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.w-tejido .cesto-h b {
+  font-weight: 800;
+  font-stretch: 110%;
+}
+
+.w-tejido .cesto-h span {
+  font-family: "Martian Mono", monospace;
+  font-size: .8rem;
+}
+
+.w-tejido .slot {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--grid10);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.w-tejido .slot svg {
+  width: 34px;
+  height: 34px;
+}
+
+.w-tejido .jer .slot {
+  width: 44px;
+  height: 44px;
+}
+
+.w-tejido .jer .slot::after {
+  font-family: "Martian Mono", monospace;
+  color: var(--ink2);
+}
+
+.w-tejido .hand {
+  font-size: .8rem;
+  color: var(--ink2);
+}
+
+.w-tejido .sync-box {
+  background: #fff;
+  border: 1px solid var(--grid10);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.w-tejido .q {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: .74rem;
+  color: var(--ink2);
+}
+
+.w-tejido .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border: 1.5px solid var(--who);
+  color: var(--who);
+  background: #fff;
+}
+
+.w-tejido .rep {
+  border: 3px solid var(--ink);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.w-tejido .rep-t {
+  font-family: "Martian Mono", monospace;
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+.w-tejido .zona {
+  display: grid;
+  grid-template-columns: 8.6em minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 28px;
+  font-size: .8rem;
+  color: var(--ink2);
+}
+
+.w-tejido .zona>div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.w-tejido .codigo {
+  background: #fff;
+  border: 1px solid var(--grid10);
+  font-family: "Martian Mono", monospace;
+  font-size: .78rem;
+  line-height: 1.95;
+  padding: 6px 0;
+  overflow-x: auto;
+}
+
+.w-tejido .codigo .ln.h {
+  color: var(--ink2);
+  font-style: italic;
+}
+
+.w-tejido .codigo .ln.act-l {
+  background: #EEF2FA;
+}
+
+.w-tejido .codigo .rn {
+  color: var(--ink2);
+  padding: 0 10px;
+  border-left: 1px solid var(--grid);
+  text-align: right;
+}
+
+.w-tejido .salida {
+  background: #fff;
+  border: 1px solid var(--grid10);
+  font-family: "Martian Mono", monospace;
+  font-size: .78rem;
+  line-height: 1.7;
+  padding: 10px 12px;
+  min-height: 13em;
+}
+
+.w-tejido .salida .warn {
+  color: #8A5A00;
+  background: var(--bloq-bg);
+}
+
+.w-tejido .salida .nota {
+  color: var(--ink2);
+  font-style: italic;
+}
+
+.w-tejido .salida .fin {
+  color: var(--cuerpo);
+  font-weight: 600;
+}
+
+.w-tejido .hilo {
+  fill: none;
+  stroke: var(--bloq);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1 7;
+}
+
+.w-tejido .hilo-pt {
+  fill: var(--bloq);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot.pop svg {
+    animation: none;
+  }
+}
+</style>
+<style>
+/* Estilos extra de la versión escenarios (se cargan después de style.css). */
+:root {
+  --e1: #B22D5E;
+  --e2: #1F7566;
+  --e3: #3243A3;
+  --pausa: #6B7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --e1: #E7799F;
+    --e2: #5CC2AE;
+    --e3: #9AA9F2;
+    --pausa: #A3ABB8;
+  }
+}
+
+:root[data-theme="dark"] {
+  --e1: #E7799F;
+  --e2: #5CC2AE;
+  --e3: #9AA9F2;
+  --pausa: #A3ABB8;
+}
+
+.h1-sub {
+  color: var(--muted);
+  font-weight: 600;
+  font-stretch: 100%;
+}
+
+.ctl .auto {
+  font-size: .9rem;
+  cursor: pointer;
+}
+
+.ctl .auto input {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+.aviso {
+  flex-basis: 100%;
+  margin: 0;
+  padding: 6px 10px;
+  border-left: 4px solid #D08F00;
+  background: rgba(208, 143, 0, .14);
+  font-weight: 600;
+  font-size: .92rem;
+}
+
+.escen {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 12px;
+}
+
+.escen-b {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.escen .lbl {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.casos {
+  flex-wrap: wrap;
+  align-self: flex-start;
+}
+
+.caso-txt {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.45;
+}
+
+.escen-nota {
+  margin: auto 0 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.stps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stp-n {
+  font-weight: 700;
+  min-width: 4.6em;
+}
+
+.stp .btn {
+  padding: 2px 0;
+  width: 32px;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.stp .btn:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.stp output {
+  font-family: "Martian Mono", monospace;
+  font-weight: 600;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.stp-max {
+  font-family: "Martian Mono", monospace;
+  font-size: .8rem;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
+.hilos-t {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hilo-t {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--who);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.hilo-t span {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  color: var(--e2);
+}
+
+.hilo-t[aria-pressed="false"] {
+  border-style: dashed;
+  border-left-style: solid;
+  color: var(--muted);
+}
+
+.hilo-t[aria-pressed="false"] span {
+  background: var(--pausa);
+  border-color: var(--pausa);
+  color: var(--surface);
+}
+
+.w-tejido .act[data-kind="paused"] {
+  outline: 2px dashed var(--ink2);
+  outline-offset: -1px;
+  opacity: .8;
+}
+
+.w-tejido .act[data-kind="paused"] .st {
+  background: var(--ink2);
+  color: #fff;
+  border-color: var(--ink2);
+}
+
+@media (max-width: 900px) {
+  .escen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Taller de jerseys <span class="h1-sub">· escenarios</span></h1>
+    <p class="enunciado">Tema propuesto 6 (pág. 273): Tenemos un taller dedicado a hacer jerseys. En su interior tenemos a tres
+      personas trabajando. Una persona está continuamente fabricando mangas, que va depositando en un cesto. El cesto
+      tiene una capacidad limitada: cuando se llena, la costurera deja de coser más mangas hasta que hay hueco libre.
+      Otra persona está continuamente fabricando los cuerpos de los jerseys, que también deposita en su correspondiente
+      cesta de capacidad limitada. Una tercera persona se encarga continuamente de ensamblar jerseys, cogiendo en cada
+      caso dos mangas de la cesta de mangas y un cuerpo de la cesta de cuerpos. Se trata de escribir el código que
+      sincronice a estas tres personas, de forma que las dos primeras personas no avancen si su cesta está llena, y que
+      la tercera persona no avance si le faltan piezas para hacer un nuevo jersey. Se supone que las capacidades de las
+      dos cestas son constantes y distintas (supongan, por ejemplo, que son dos constantes enteras «NumMaxMangas» y
+      «NumMaxCuerpos»).</p>
+  </header>
+
+  <div class="ctl" role="toolbar" aria-label="Controles de la animación">
+    <div class="g"><button type="button" class="btn pri" id="btnPlay">Pausar</button><button type="button" class="btn"
+        id="btnReset">Reiniciar</button></div>
+    <div class="g"><span class="lbl">Velocidad</span>
+      <div class="seg" id="segVel"><button type="button" data-vel="0.25" aria-pressed="false">¼×</button><button type="button" data-vel="0.5" aria-pressed="true">½×</button><button
+          type="button" data-vel="1" aria-pressed="false">1×</button><button type="button" data-vel="2"
+          aria-pressed="false">2×</button><button type="button" data-vel="4" aria-pressed="false">4×</button></div>
+    </div>
+    <div class="g"><label class="lbl" for="ritmo">Ensamblador</label><input type="range" id="ritmo" min="1" max="5"
+        step="1" value="4"><span class="ritmo-txt" id="ritmoTxt">lento</span></div>
+    <label class="g auto"><input type="checkbox" id="autoPausa"> Pausar en cada wait()</label>
+    <p class="aviso" id="aviso" role="status" hidden></p>
+  </div>
+
+  <section class="escen" aria-label="Escenario de la simulación">
+    <div class="escen-b escen-casos">
+      <span class="lbl">Casos armados</span>
+      <div class="seg casos" id="casos"><button type="button" data-caso="vacio" aria-pressed="false">Vacío</button><button type="button" data-caso="lleno" aria-pressed="false">Mangas llenas</button><button type="button" data-caso="tres" aria-pressed="false">3 mangas y 1 cuerpo</button><button type="button" data-caso="cuerpo" aria-pressed="false">Falta el cuerpo</button></div>
+      <p class="caso-txt" id="casoTxt"></p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Arranca con</span>
+      <div class="stps">
+          <div class="stp" data-cesto="mangas"><span class="stp-n">Mangas</span><button type="button" class="btn" data-d="-1" aria-label="Una manga menos">−</button><output>0</output><span class="stp-max">/ 5</span><button type="button" class="btn" data-d="1" aria-label="Una manga más">+</button></div>
+          <div class="stp" data-cesto="cuerpos"><span class="stp-n">Cuerpos</span><button type="button" class="btn" data-d="-1" aria-label="Un cuerpo menos">−</button><output>0</output><span class="stp-max">/ 3</span><button type="button" class="btn" data-d="1" aria-label="Un cuerpo más">+</button></div>
+      </div>
+      <p class="escen-nota">Cambiar las piezas reinicia la simulación.</p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Hilos</span>
+      <div class="hilos-t">
+          <button type="button" class="hilo-t" data-actor="cost" aria-pressed="true" style="--who: var(--e1)">Costurera<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="fab" aria-pressed="true" style="--who: var(--e2)">Fabricante<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="ens" aria-pressed="true" style="--who: var(--e3)">Ensamblador<span>trabaja</span></button>
+      </div>
+      <p class="escen-nota">Tocá un hilo para detenerlo o reactivarlo, sin reiniciar. Detenido, no entra al monitor.</p>
+    </div>
+  </section>
+
+  <div class="escena">
+    <div class="sk w-tejido" data-world="tejido"></div>
+  </div>
+
+  <section class="clave" aria-label="Código clave del monitor">
+    <div class="clave-cod">
+      <pre><span class="l"><i></i><span><span class="kw">class</span> Taller {</span></span><span class="l"><i></i><span>    <span class="kw">private int</span> mangas = 0;   <span class="cm">// piezas en cada cesto</span></span></span><span class="l"><i></i><span>    <span class="kw">private int</span> cuerpos = 0;</span></span><span class="l"><i></i><span> </span></span><span class="l k"><i><span class="mk">1</span></i><span>    <span class="kw">synchronized void</span> dejarManga() {</span></span><span class="l k w"><i><span class="mk w">2</span></i><span>        <span class="kw">while</span> (mangas == NUM_MAX_MANGAS)</span></span><span class="l k w"><i></i><span>            wait();</span></span><span class="l"><i></i><span>        mangas++;</span></span><span class="l k"><i><span class="mk">3</span></i><span>        notifyAll();</span></span><span class="l"><i></i><span>    }</span></span><span class="l"><i></i><span>    <span class="cm">// dejarCuerpo() es igual, con cuerpos y NUM_MAX_CUERPOS</span></span></span><span class="l"><i></i><span> </span></span><span class="l k"><i><span class="mk">1</span></i><span>    <span class="kw">synchronized void</span> tomarPiezas() {</span></span><span class="l k w"><i><span class="mk w">2</span></i><span>        <span class="kw">while</span> (mangas &lt; 2 || cuerpos &lt; 1)</span></span><span class="l k w"><i></i><span>            wait();</span></span><span class="l k"><i><span class="mk">4</span></i><span>        mangas -= 2;  cuerpos -= 1;</span></span><span class="l k"><i><span class="mk">3</span></i><span>        notifyAll();</span></span><span class="l"><i></i><span>    }</span></span><span class="l"><i></i><span>}</span></span></pre>
+    </div>
+    <div class="clave-notas">
+      <h3>Código</h3>
+      <ol>
+        <li><span class="mk">1</span><span><code>synchronized</code> convierte la clase en monitor: un solo hilo a la
+            vez adentro. La exclusión mutua sobre los cestos sale sola, sin <code>mutex</code> a mano.</span></li>
+        <li><span class="mk w">2</span><span><code>while (…) wait();</code> es la condición de espera: si el cesto está
+            lleno o faltan piezas, el hilo suelta el monitor y duerme. Va con <code>while</code> y no con
+            <code>if</code> porque al despertar tiene que volver a revisar.</span></li>
+        <li><span class="mk">3</span><span><code>notifyAll()</code> avisa que el estado cambió: los que esperaban
+            vuelven a la cola de entrada y revisan su condición.</span></li>
+        <li><span class="mk">4</span><span>El ensamblador saca 2 mangas y 1 cuerpo <b>en una sola operación</b>, así que
+            nunca queda con piezas a medias. Por eso elegimos el monitor.</span></li>
+      </ol>
+      <p class="pie">Versión resumida: el archivo real además imprime cada paso y declara
+        <code>throws InterruptedException</code>.</p>
+    </div>
+  </section>
+
+  <section class="explica">
+    <div class="panel">
+      <h3>Cómo funciona el monitor</h3>
+      <p>Los dos cestos viven dentro del monitor <code>Taller</code>. En Java, <code>synchronized</code> garantiza que
+        haya <b>un solo hilo adentro</b> a la vez. Los demás esperan en la <b>cola de entrada</b>.</p>
+      <ul>
+        <li>Si un hilo no puede seguir (cesto lleno o faltan piezas), llama a <code>wait()</code>: suelta el monitor y
+          pasa a esperar aparte, sin bloquear a nadie.</li>
+        <li>Quien cambia el estado llama a <code>notifyAll()</code>: todos los que esperaban pasan a la cola de entrada
+          y, cuando les toca, <b>vuelven a revisar</b> su condición.</li>
+        <li>Por eso la condición va en un <code>while</code> y no en un <code>if</code>: al volver, el cesto puede
+          seguir lleno. En la salida se ve como "lleno: espera" dos veces seguidas para la misma persona.</li>
+      </ul>
+      <p>El ensamblador se lleva las 3 piezas <b>en una sola operación</b>, así que nunca queda con
+        piezas a medias. Esa es la ventaja principal frente a los semáforos.</p>
+    </div>
+    <div class="panel full">
+      <h3>Por qué monitor y no semáforos</h3>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Semáforos</th>
+              <th>Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclusión mutua</td>
+              <td>A mano, con <code>mutex</code> (P al entrar, V al salir)</td>
+              <td>Automática, con <code>synchronized</code></td>
+            </tr>
+            <tr>
+              <td>Esperar por espacio o piezas</td>
+              <td>Semáforos contadores <code>hayLugar</code> / <code>hayPiezas</code></td>
+              <td><code>while (condición) wait();</code></td>
+            </tr>
+            <tr>
+              <td>Avisar que algo cambió</td>
+              <td><code>V()</code> sobre el semáforo que corresponde</td>
+              <td><code>notifyAll()</code>, y cada uno revisa su condición</td>
+            </tr>
+            <tr>
+              <td>Tomar 2 mangas y 1 cuerpo</td>
+              <td>En pasos separados: puede quedar con piezas en la mano</td>
+              <td>Todo junto, en una sola operación</td>
+            </tr>
+            <tr>
+              <td>Error típico</td>
+              <td>Invertir el orden de los P, u olvidar un V</td>
+              <td>Usar <code>if</code> en lugar de <code>while</code></td>
+            </tr>
+          </tbody>
+        </table>
+  </section>
+</div>
+
+<script>
+// Animación de taller-jerseys-escenarios.html: la misma simulación de TallerJerseys.java, pero se elige con
+// cuántas piezas arranca cada cesto y se puede detener cualquier hilo para ver a quién bloquea.
+(() => {
+  "use strict";
+  const MAX_M = 5, MAX_C = 3, N_J = 6, STEP = 260, CS = 450, PROD = [500, 1100];
+  const RITMOS = { 1: [[300, 600], "muy rápido"], 2: [[700, 1200], "rápido"], 3: [[1300, 2000], "parejo"], 4: [[2200, 3200], "lento"], 5: [[3600, 5000], "muy lento"] };
+  const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+  const ritmoEns = () => RITMOS[$("ritmo").value][0];
+  const modo = "mon";
+  let vel = 0.5, jugando = true;
+  // Escenario elegido: piezas iniciales en cada cesto y qué hilos están detenidos.
+  const ESC = { ini: { mangas: 0, cuerpos: 0 }, parados: { cost: false, fab: false, ens: false } };
+
+  const CODE = {
+    mon: [
+      { h: "// dejarManga() / dejarCuerpo()" },
+      { id: "e1", s: "synchronized void dejar…() {" },
+      { id: "c1", s: "  while (cesto lleno)" },
+      { id: "c2", s: "    wait();" },
+      { id: "c3", s: "  piezas++;" },
+      { id: "c4", s: "  notifyAll();" },
+      { id: "x1", s: "}" },
+      { h: "// tomarPiezas(): ensamblador" },
+      { id: "e2", s: "synchronized void tomarPiezas() {" },
+      { id: "k1", s: "  while (mangas < 2 || cuerpos < 1)" },
+      { id: "k2", s: "    wait();" },
+      { id: "k3", s: "  mangas -= 2;  cuerpos -= 1;" },
+      { id: "k4", s: "  notifyAll();" },
+      { id: "x2", s: "}" },
+      { h: "// fuera del monitor" },
+      { id: "w1", s: "trabajar();" }
+    ]
+  };
+  const lineaTexto = (m, id) => (CODE[m].find(l => l.id === id) || {}).s || "";
+
+  // ================= MOTOR (idéntico para los tres estilos) =================
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  function crearSim(m, seed, emit) {
+    const rng = mulberry32(seed), rnd = ([a, b]) => a + rng() * (b - a);
+    const sim = {
+      modo: m, now: 0, jerseys: 0, fin: false, logs: [],
+      cestos: { mangas: { nombre: "mangas", max: MAX_M, n: ESC.ini.mangas }, cuerpos: { nombre: "cuerpos", max: MAX_C, n: ESC.ini.cuerpos } },
+      mon: { owner: null, entrada: [], espera: [] }
+    };
+    const log = (texto, tipo) => { sim.logs.push({ texto, tipo, t: sim.now }); if (sim.logs.length > 200) sim.logs.shift(); };
+    const dormir = (a, ms, estado, kind) => { a.state = "sleeping"; a.until = sim.now + ms; if (estado) a.estado = estado; if (kind) a.kind = kind; };
+    function liberarMonitor() {
+      sim.mon.owner = null; const nx = sim.mon.entrada.shift();
+      if (nx) { sim.mon.owner = nx; dormir(nx, STEP, "entra al monitor", "mon"); }
+    }
+    function ejecutar(a, c) {
+      // Un hilo detenido no entra al monitor: queda afuera, sin tener el candado.
+      if (c.t === "enter" && ESC.parados[a.id]) { a.pend = c; a.state = "parked"; return; }
+      if (c.ln) a.ln = c.ln;
+      switch (c.t) {
+        case "sleep": dormir(a, c.ms, c.estado, c.kind); break;
+        case "enter":
+          if (!sim.mon.owner) { sim.mon.owner = a; dormir(a, STEP, "entra al monitor", "mon"); }
+          else { sim.mon.entrada.push(a); a.state = "blocked"; a.kind = "wait"; a.estado = "espera para entrar al monitor"; }
+          break;
+        case "wait": sim.mon.espera.push(a); a.state = "blocked"; a.kind = "wait"; a.estado = "wait(): duerme y suelta el monitor"; liberarMonitor();
+          emit({ type: "wait", actor: a, motivo: sim.logs[sim.logs.length - 1].texto.trim() }); break;
+        case "notifyAll": {
+          const ws = sim.mon.espera.splice(0);
+          ws.forEach(w => { w.estado = "despertado: espera para volver a entrar"; sim.mon.entrada.push(w); });
+          if (ws.length) log(`    · notifyAll() despierta a: ${ws.map(w => w.logName).join(", ")}`, "nota");
+          dormir(a, STEP, "notifyAll()", "mon"); break;
+        }
+        case "exit": liberarMonitor(); a.estado = "sale del monitor"; a.kind = "work"; break;
+      }
+    }
+    function correr(a) {
+      let g = 0;
+      while (a.state === "ready" && g++ < 50) {
+        const r = a.gen.next();
+        if (r.done) { a.state = "done"; a.kind = "done"; a.estado = "terminó"; a.ln = null; break; }
+        ejecutar(a, r.value);
+      }
+    }
+    const M = sim.cestos.mangas, C = sim.cestos.cuerpos;
+    const MANGA = { art: "la manga", k: "manga" }, CUERPO = { art: "el cuerpo", k: "cuerpo" };
+
+    // Como dice el enunciado, trabajan "continuamente": sin cantidad fija.
+    function* prodMon(a, c, p) {
+      for (let i = 1; ; i++) {
+        yield { t: "sleep", ms: rnd(PROD), ln: "w1", estado: `fabrica ${p.art} ${i}`, kind: "work" };
+        log(`${a.logName} termina ${p.art} ${i}`);
+        yield { t: "enter", ln: "e1" };
+        yield { t: "sleep", ms: STEP, ln: "c1", estado: "revisa si el cesto está lleno", kind: "mon" };
+        while (c.n === c.max) {
+          log(`    cesto de ${c.nombre} lleno: ${a.logName} espera`, "warn");
+          yield { t: "wait", ln: "c2" };
+          yield { t: "sleep", ms: STEP, ln: "c1", estado: "vuelve a revisar la condición", kind: "mon" };
+        }
+        yield { t: "sleep", ms: CS, ln: "c3", estado: `deja ${p.art} en el cesto`, kind: "mon" };
+        c.n++; a.hechas = i; emit({ type: "deja", cesto: c.nombre, idx: c.n - 1, actor: a.id, pieza: p.k });
+        log(`    cesto de ${c.nombre} recibe 1, hay ${c.n}/${c.max}`);
+        yield { t: "notifyAll", ln: "c4" };
+        yield { t: "exit", ln: "x1" };
+      }
+    }
+    function* ensMon(a) {
+      for (let j = 1; ; j++) {
+        yield { t: "enter", ln: "e2" };
+        yield { t: "sleep", ms: STEP, ln: "k1", estado: "revisa si están las 3 piezas", kind: "mon" };
+        while (M.n < 2 || C.n < 1) {
+          log(`    faltan piezas (mangas ${M.n}, cuerpos ${C.n}): ensamblador espera`, "warn");
+          yield { t: "wait", ln: "k2" };
+          yield { t: "sleep", ms: STEP, ln: "k1", estado: "vuelve a revisar la condición", kind: "mon" };
+        }
+        yield { t: "sleep", ms: CS, ln: "k3", estado: "se lleva 2 mangas y 1 cuerpo", kind: "mon" };
+        emit({ type: "saca", cesto: "mangas", idxs: [M.n - 1, M.n - 2], pieza: "manga" });
+        emit({ type: "saca", cesto: "cuerpos", idxs: [C.n - 1], pieza: "cuerpo" });
+        M.n -= 2; C.n -= 1; a.hand = { manga: 2, cuerpo: 1 };
+        log(`    el ensamblador se lleva 2 mangas y 1 cuerpo, quedan mangas ${M.n}, cuerpos ${C.n}`);
+        yield { t: "notifyAll", ln: "k4" };
+        yield { t: "exit", ln: "x2" };
+        yield { t: "sleep", ms: rnd(ritmoEns()), ln: "w1", estado: `arma el jersey ${j}`, kind: "work" };
+        terminar(a, j);
+      }
+    }
+    function terminar(a, j) {
+      a.hand = { manga: 0, cuerpo: 0 }; sim.jerseys = j;
+      emit({ type: "jersey", j });
+      log(`ensamblador termina el jersey ${j}`);
+    }
+    const mk = (id, nombre, logName) => ({ id, nombre, logName, state: "ready", until: 0, ln: null, estado: "", kind: "work", hechas: 0, hand: { manga: 0, cuerpo: 0 } });
+    const cost = mk("cost", "Costurera", "costurera"), fab = mk("fab", "Fabricante", "fabricante"), ens = mk("ens", "Ensamblador", "ensamblador");
+    cost.gen = prodMon(cost, M, MANGA); fab.gen = prodMon(fab, C, CUERPO); ens.gen = ensMon(ens);
+    sim.actores = [cost, fab, ens];
+    sim.arrancar = () => sim.actores.forEach(correr);
+    sim.avanzar = dt => {
+      let resto = dt;
+      while (resto > 0 && !sim.fin) {
+        const paso = Math.min(25, resto); resto -= paso; sim.now += paso;
+        for (const a of sim.actores) {
+          // Detenido mientras trabaja: el reloj de su tarea no avanza.
+          a.congelado = ESC.parados[a.id] && a.state === "sleeping" && a.kind === "work";
+          if (a.congelado) a.until += paso;
+          if (a.state === "parked" && !ESC.parados[a.id]) { a.state = "ready"; const c = a.pend; a.pend = null; ejecutar(a, c); }
+        }
+        for (let v = 0; v < 6; v++) {
+          let algo = false;
+          for (const a of sim.actores) if (a.state === "sleeping" && a.until <= sim.now) { a.state = "ready"; algo = true; correr(a); }
+          if (!algo) break;
+        }
+        if (sim.frenar) { sim.frenar = false; break; }
+      }
+    };
+    // ¿En qué está esperando un hilo bloqueado? Devuelve la clave del lugar (para dibujar el hilo).
+    sim.bloqueo = a => {
+      if (a.state !== "blocked") return null;
+      if (sim.mon.entrada.includes(a)) return "mon-entrada";
+      if (sim.mon.espera.includes(a)) return "mon-espera";
+      return null;
+    };
+    return sim;
+  }
+
+  // ================= ÍCONOS =================
+  const ICON = {
+    manga: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 5.5 11.5 3l7.5 14.5-6.5 3.5z"/></svg>',
+    cuerpo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3h3.2c.5 1.6 3.1 1.6 3.6 0H17l1.5 4v14h-13V7z"/></svg>',
+    jersey: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.2 2.5 3.5 4.6 1 11.2l3.4 1.6L6 9.6V21.5h12V9.6l1.6 3.2 3.4-1.6-2.5-6.6-4.7-2.1c-.6 1.9-7 1.9-7.6 0z"/></svg>',
+    ovillo: '<svg class="ovi" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="14" fill="currentColor"/><path d="M6 12c6 2 14 1 22-3M5 19c8 3 17 2 24-4M8 25c6 2 13 1 19-4M13 4c-3 7-3 18 1 27M21 4c-4 8-4 18 0 26" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.4"/></svg>',
+  };
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const KIND = { work: "trabajando", sync: "sincronizando", mon: "en el monitor", wait: "bloqueado", done: "terminó", paused: "detenido" };
+
+  // ================= RENDERER DOM (tejido y señales) =================
+  function crearDom(root) {
+    const T = { titulo: "Taller de jerseys", prod: "Hilados", cestos: "Bloques de la carta", ens: "Armado", jer: "Prendas terminadas", sync: "Contadores", code: "Filas del patrón (código)", log: "Notas del patrón (salida)" };
+    const actorHtml = (id, nombre) =>
+      `<div class="act" data-actor="${id}" style="--who: var(--a-${id})">${ICON.ovillo}<b>${nombre}<span class="st"></span></b><span class="es"></span><code></code>${id !== "ens" ? '<span class="pg"></span>' : ""}</div>`;
+    root.innerHTML = `
+    <svg class="sk-threads" aria-hidden="true"></svg>
+    <div class="sk-top"><b>${T.titulo}</b><span data-r="modo"></span><span data-r="time"></span></div>
+    <div class="sk-floor">
+      <div class="sk-col"><h5>${T.prod}</h5>${actorHtml("cost", "Costurera")}${actorHtml("fab", "Fabricante")}</div>
+      <div class="sk-col"><h5>${T.cestos}</h5>
+        <div class="cesto" data-cesto="mangas"><div class="cesto-h"><b>Mangas</b><span data-r="cnt"></span></div><div class="slots"></div></div>
+        <div class="cesto" data-cesto="cuerpos"><div class="cesto-h"><b>Cuerpos</b><span data-r="cnt"></span></div><div class="slots"></div></div>
+      </div>
+      <div class="sk-col"><h5>${T.ens}</h5>${actorHtml("ens", "Ensamblador")}<div class="hand" data-r="hand"></div><h5>${T.jer}</h5><div class="jer" data-r="jer"></div></div>
+    </div>
+    <div class="sk-low">
+      <div class="sk-col"><h5>${T.sync}</h5><div data-r="sync"></div></div>
+      <div class="sk-col"><h5>${T.code}</h5><div class="codigo" data-r="code"></div></div>
+      <div class="sk-col"><h5>${T.log}</h5><pre class="salida" data-r="log"></pre></div>
+    </div>`;
+    const q = s => root.querySelector(s);
+    const actorEl = id => q(`[data-actor="${id}"]`);
+    const cestoEl = n => q(`[data-cesto="${n}"]`);
+    const slotEl = (n, i) => cestoEl(n).querySelectorAll(".slot")[i];
+    const jerEl = j => q('[data-r="jer"]').querySelectorAll(".slot")[j - 1];
+    const svg = q(".sk-threads");
+    const color = v => getComputedStyle(root).getPropertyValue(v).trim();
+    let prev = {}, popDelay = {}, jPrev = 0, jDelay = 0;
+
+    function volar(desde, hacia, pieza) {
+      if (reducir || !desde || !hacia) return 0;
+      const dur = Math.max(160, 560 / Math.max(1, vel));
+      const a = desde.getBoundingClientRect(), b = hacia.getBoundingClientRect();
+      if (a.bottom < 0 || a.top > innerHeight + 200) return 0;
+      const el = document.createElement("div"); el.className = "vuela"; el.innerHTML = ICON[pieza];
+      el.style.color = color(pieza === "jersey" ? "--ens" : "--" + pieza);
+      document.body.appendChild(el);
+      const ax = a.left + a.width / 2 - 13, ay = a.top + a.height / 2 - 13, bx = b.left + b.width / 2 - 13, by = b.top + b.height / 2 - 13;
+      el.animate([
+        { transform: `translate(${ax}px,${ay}px) scale(.7)`, opacity: .5 },
+        { transform: `translate(${(ax + bx) / 2}px,${Math.min(ay, by) - 36}px) scale(1.2)`, opacity: 1, offset: .5 },
+        { transform: `translate(${bx}px,${by}px) scale(1)`, opacity: 1 }
+      ], { duration: dur, easing: "cubic-bezier(.45,0,.25,1)" }).onfinish = () => el.remove();
+      return dur;
+    }
+
+    function syncMon(sim) {
+      const chip = a => `<span class="chip" style="--who: var(--a-${a.id})">${a.nombre}</span>`;
+      const lista = arr => arr.length ? arr.map(chip).join("") : "<span>nadie</span>";
+      const m = sim.mon, M = sim.cestos.mangas, C = sim.cestos.cuerpos;
+      return `<div class="zona" data-t="mon-entrada"><span>Esperan para entrar</span><div>${lista(m.entrada)}</div></div>
+      <div class="rep"><span class="rep-t">recuadro de repetición · monitor Taller</span>
+        <div class="zona"><span>Adentro</span><div>${m.owner ? chip(m.owner) : "<span>libre</span>"}</div></div>
+        <div class="zona" data-t="mon-espera"><span>En wait()</span><div>${lista(m.espera)}</div></div>
+        <div class="zona"><span>Variables</span><div style="font-family:'Martian Mono',monospace">mangas ${M.n}/${MAX_M} · cuerpos ${C.n}/${MAX_C}</div></div>
+        </div>`;
+    }
+
+    const api = {
+      reset(sim) {
+        for (const c of Object.values(sim.cestos)) cestoEl(c.nombre).querySelector(".slots").innerHTML = Array.from({ length: c.max }, () => `<div class="slot">${ICON[c.nombre === "mangas" ? "manga" : "cuerpo"]}</div>`).join("");
+        q('[data-r="jer"]').innerHTML = Array.from({ length: N_J }, (_, i) => `<div class="slot" data-n="${i + 1}">${ICON.jersey}</div>`).join("");
+        q('[data-r="code"]').innerHTML = CODE[sim.modo].map((l, i) => l.h
+          ? `<div class="ln h"><span class="marks"></span><code>${esc(l.h)}</code><span class="rn"></span></div>`
+          : `<div class="ln" data-id="${l.id}"><span class="marks"></span><code>${esc(l.s)}</code><span class="rn">${i + 1}</span></div>`).join("");
+        q('[data-r="sync"]').className = "sync-box"; q('[data-r="sync"]').dataset.html = "";
+        q('[data-r="log"]').textContent = "";
+        prev = { mangas: 0, cuerpos: 0 }; popDelay = { mangas: 0, cuerpos: 0 }; jPrev = 0; jDelay = 0; this.logLen = -1;
+      },
+      onEvent(e) {
+        if (e.type === "deja") popDelay[e.cesto] = volar(actorEl(e.actor), slotEl(e.cesto, e.idx), e.pieza);
+        else if (e.type === "saca") e.idxs.forEach(i => volar(slotEl(e.cesto, i), q('[data-r="hand"]'), e.pieza));
+        else if (e.type === "jersey") jDelay = volar(actorEl("ens"), jerEl((e.j - 1) % N_J + 1), "jersey");
+      },
+      render(sim) {
+        q('[data-r="time"]').textContent = `t = ${(sim.now / 1000).toFixed(1).replace(".", ",")} s · ${sim.jerseys} ${sim.jerseys === 1 ? "jersey" : "jerseys"}`;
+        for (const a of sim.actores) {
+          const el = actorEl(a.id);
+          const kind = a.state === "parked" || a.congelado ? "paused" : a.kind;
+          el.dataset.kind = kind;
+          el.querySelector(".st").textContent = KIND[kind];
+          el.querySelector(".es").textContent = a.state === "parked" ? "detenido antes de entrar al monitor" : a.congelado ? `detenido mientras ${a.estado}` : a.estado;
+          el.querySelector("code").textContent = a.ln ? lineaTexto(sim.modo, a.ln) : "—";
+          const pg = el.querySelector(".pg");
+          if (pg) pg.textContent = a.id === "cost" ? `mangas hechas: ${a.hechas}` : `cuerpos hechos: ${a.hechas}`;
+          if (a.id === "ens") {
+            const h = []; for (let i = 0; i < a.hand.manga; i++) h.push(`<span style="color:var(--manga)">${ICON.manga}</span>`); for (let i = 0; i < a.hand.cuerpo; i++) h.push(`<span style="color:var(--cuerpo)">${ICON.cuerpo}</span>`);
+            const html = "en la mano: " + (h.length ? h.join("") : "nada");
+            const hand = q('[data-r="hand"]'); if (hand.dataset.html !== html) { hand.innerHTML = html; hand.dataset.html = html; }
+          }
+        }
+        for (const c of Object.values(sim.cestos)) {
+          const box = cestoEl(c.nombre);
+          box.querySelector('[data-r="cnt"]').textContent = `${c.n}/${c.max}${c.n === c.max ? " · lleno" : ""}`;
+          box.classList.toggle("lleno", c.n === c.max);
+          box.querySelectorAll(".slot").forEach((s, i) => {
+            const on = i < c.n;
+            if (on && i >= prev[c.nombre]) { s.classList.add("pop"); s.style.setProperty("--d", (popDelay[c.nombre] * .8) + "ms"); }
+            if (!on) s.classList.remove("pop");
+            s.classList.toggle("on", on);
+            s.style.color = `var(--${c.nombre === "mangas" ? "manga" : "cuerpo"})`;
+          });
+          prev[c.nombre] = c.n;
+        }
+        // El estante tiene N_J lugares: al llenarse se vacía y vuelve a empezar.
+        const enEstante = sim.jerseys ? (sim.jerseys - 1) % N_J + 1 : 0;
+        if (enEstante < jPrev) jPrev = 0;
+        q('[data-r="jer"]').querySelectorAll(".slot").forEach((s, i) => {
+          const on = i < enEstante;
+          if (on && i >= jPrev) { s.classList.add("pop"); s.style.setProperty("--d", (jDelay * .8) + "ms"); }
+          if (!on) s.classList.remove("pop");
+          s.classList.toggle("on", on);
+          s.style.color = "var(--ens)";
+        });
+        jPrev = enEstante;
+        const syncEl = q('[data-r="sync"]');
+        const html = syncMon(sim);
+        if (syncEl.dataset.html !== html) { syncEl.innerHTML = html; syncEl.dataset.html = html; }
+        q('[data-r="code"]').querySelectorAll(".ln[data-id]").forEach(ln => {
+          const quienes = sim.actores.filter(a => a.ln === ln.dataset.id && a.state !== "done");
+          const marks = quienes.map(a => `<i style="--who: var(--a-${a.id})" title="${a.nombre}"></i>`).join("");
+          const mk = ln.querySelector(".marks"); if (mk.dataset.html !== marks) { mk.innerHTML = marks; mk.dataset.html = marks; }
+          ln.classList.toggle("act-l", quienes.length > 0);
+        });
+        if (this.logLen !== sim.logs.length) {
+          const out = q('[data-r="log"]');
+          out.innerHTML = sim.logs.slice(-9).map(l => {
+            return `<span class="${l.tipo || ""}">${esc(l.texto.trim() === l.texto ? l.texto : "  " + l.texto.trim())}</span>`;
+          }).join("\n");
+          this.logLen = sim.logs.length;
+        }
+        // hilos: de cada bloqueado a lo que espera
+        const rb = root.getBoundingClientRect();
+        let paths = "";
+        for (const a of sim.actores) {
+          const k = sim.bloqueo(a); if (!k) continue;
+          const t = q(`[data-t="${k}"]`); if (!t) continue;
+          const r1 = actorEl(a.id).getBoundingClientRect(), r2 = t.getBoundingClientRect();
+          const x1 = r1.left + r1.width / 2 - rb.left, y1 = r1.bottom - rb.top;
+          const x2 = r2.left + Math.min(40, r2.width / 2) - rb.left, y2 = r2.top + Math.min(16, r2.height / 2) - rb.top;
+          const dy = Math.max(40, Math.abs(y2 - y1) * .5);
+          paths += `<path class="hilo" d="M${x1},${y1} C${x1},${y1 + dy} ${x2},${y2 - dy} ${x2},${y2}"/><circle class="hilo-pt" cx="${x2}" cy="${y2}" r="4.5"/>`;
+        }
+        if (svg.dataset.html !== paths) { svg.innerHTML = paths; svg.dataset.html = paths; }
+      }
+    };
+    return api;
+  }
+
+  // ================= ARMADO =================
+  const escenas = [
+    { el: document.querySelector('[data-world="tejido"]'), r: null }
+  ];
+  escenas[0].r = crearDom(escenas[0].el);
+  escenas.forEach(e => { e.visible = true; });
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(ents => ents.forEach(en => { const e = escenas.find(x => x.el === en.target); if (e) e.visible = en.isIntersecting; }), { rootMargin: "200px" });
+    escenas.forEach(e => io.observe(e.el));
+  }
+
+  function reiniciar() {
+    const seed = (Math.random() * 1e9) | 0;
+    for (const e of escenas) {
+      e.sim = crearSim(modo, seed, ev => { alEvento(ev, e.sim); e.r.onEvent(ev, e.sim); });
+      e.r.reset(e.sim);
+    }
+    for (const e of escenas) e.sim.arrancar();
+    for (const e of escenas) e.r.render(e.sim);
+  }
+
+  let ultimo = null;
+  function cuadro(ts) {
+    if (ultimo === null) ultimo = ts;
+    const dt = Math.min(100, ts - ultimo); ultimo = ts;
+    if (jugando) for (const e of escenas) e.sim.avanzar(dt * vel);
+    for (const e of escenas) if (e.visible) e.r.render(e.sim);
+    $("btnPlay").textContent = jugando ? "Pausar" : "Seguir";
+    requestAnimationFrame(cuadro);
+  }
+
+  const marcar = (seg, attr, v) => seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset[attr] === String(v))));
+  $("segVel").addEventListener("click", ev => { const b = ev.target.closest("button"); if (!b) return; vel = Number(b.dataset.vel); marcar($("segVel"), "vel", b.dataset.vel); });
+  $("btnPlay").addEventListener("click", () => { jugando = !jugando; if (jugando) avisar(""); });
+  $("btnReset").addEventListener("click", () => { jugando = true; avisar(""); reiniciar(); });
+  const ritmoTxt = () => { $("ritmoTxt").textContent = RITMOS[$("ritmo").value][1]; };
+  $("ritmo").addEventListener("input", ritmoTxt);
+  document.addEventListener("keydown", ev => { if (ev.code === "Space" && !/INPUT|BUTTON|TEXTAREA|A/.test(document.activeElement.tagName)) { ev.preventDefault(); $("btnPlay").click(); } });
+
+  // ================= ESCENARIO =================
+  const NOMBRES = { cost: "La costurera", fab: "El fabricante", ens: "El ensamblador" };
+  const MAXES = { mangas: MAX_M, cuerpos: MAX_C };
+  const CASOS = {
+    vacio: { ini: [0, 0], parados: [], txt: "Los cestos arrancan vacíos y todos trabajan: es la simulación normal." },
+    lleno: { ini: [5, 0], parados: ["ens"], txt: "El cesto de mangas arranca lleno y el ensamblador está detenido. La costurera termina una manga, encuentra el cesto lleno y hace wait(). El fabricante llena el cesto de cuerpos y también queda en wait(). Reactivá al ensamblador: al sacar piezas hace notifyAll() y los despierta a los dos." },
+    tres: { ini: [3, 1], parados: [], txt: "Arranca con 3 mangas y 1 cuerpo. El ensamblador se lleva 2 mangas y el cuerpo enseguida, y queda 1 manga. En la vuelta siguiente le faltan piezas: hace wait() hasta que alguien deja una y llama a notifyAll()." },
+    cuerpo: { ini: [4, 0], parados: ["fab"], txt: "Hay 4 mangas pero ningún cuerpo, y el fabricante está detenido. El ensamblador hace wait() porque le falta el cuerpo. La costurera llena el cesto (5/5) y también queda en wait(): los dos dependen del fabricante. Reactivalo para ver cómo se destraban." }
+  };
+  function avisar(t) { $("aviso").textContent = t; $("aviso").hidden = !t; }
+  function alEvento(ev, s) {
+    if (ev.type !== "wait" || !$("autoPausa").checked) return;
+    jugando = false; s.frenar = true;
+    avisar(`${NOMBRES[ev.actor.id]} hizo wait(): ${ev.motivo.split(":")[0]}`);
+  }
+  function pintarEscenario() {
+    for (const k of ["mangas", "cuerpos"]) {
+      const st = document.querySelector(`.stp[data-cesto="${k}"]`);
+      st.querySelector("output").textContent = ESC.ini[k];
+      st.querySelector('[data-d="-1"]').disabled = ESC.ini[k] === 0;
+      st.querySelector('[data-d="1"]').disabled = ESC.ini[k] === MAXES[k];
+    }
+    document.querySelectorAll(".hilo-t").forEach(b => {
+      const p = ESC.parados[b.dataset.actor];
+      b.setAttribute("aria-pressed", String(!p));
+      b.querySelector("span").textContent = p ? "detenido" : "trabaja";
+    });
+  }
+  function usarCaso(id) {
+    const c = CASOS[id];
+    [ESC.ini.mangas, ESC.ini.cuerpos] = c.ini;
+    for (const k in ESC.parados) ESC.parados[k] = c.parados.includes(k);
+    marcar($("casos"), "caso", id);
+    $("casoTxt").textContent = c.txt;
+    pintarEscenario(); jugando = true; avisar(""); reiniciar();
+  }
+  $("casos").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) usarCaso(b.dataset.caso); });
+  document.querySelectorAll(".stp").forEach(st => st.addEventListener("click", ev => {
+    const b = ev.target.closest("button"); if (!b) return;
+    const k = st.dataset.cesto;
+    ESC.ini[k] = Math.max(0, Math.min(MAXES[k], ESC.ini[k] + Number(b.dataset.d)));
+    marcar($("casos"), "caso", "");
+    $("casoTxt").textContent = "Combinación propia: la simulación arranca de nuevo con estas piezas.";
+    pintarEscenario(); jugando = true; avisar(""); reiniciar();
+  }));
+  // Detener o reactivar un hilo no reinicia: se aplica en el momento.
+  document.querySelectorAll(".hilo-t").forEach(b => b.addEventListener("click", () => {
+    ESC.parados[b.dataset.actor] = !ESC.parados[b.dataset.actor];
+    pintarEscenario();
+  }));
+
+  ritmoTxt();
+  usarCaso("vacio");
+  requestAnimationFrame(cuadro);
+})();
+</script>

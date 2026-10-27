@@ -1,0 +1,149 @@
+<meta charset="utf-8">
+<title>Taller de Jerseys</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Martian+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="escenarios.css">
+
+<div class="wrap">
+  <header>
+    <h1>Taller de jerseys <span class="h1-sub">· escenarios</span></h1>
+    <p class="enunciado">Tema propuesto 6 (pág. 273): Tenemos un taller dedicado a hacer jerseys. En su interior tenemos a tres
+      personas trabajando. Una persona está continuamente fabricando mangas, que va depositando en un cesto. El cesto
+      tiene una capacidad limitada: cuando se llena, la costurera deja de coser más mangas hasta que hay hueco libre.
+      Otra persona está continuamente fabricando los cuerpos de los jerseys, que también deposita en su correspondiente
+      cesta de capacidad limitada. Una tercera persona se encarga continuamente de ensamblar jerseys, cogiendo en cada
+      caso dos mangas de la cesta de mangas y un cuerpo de la cesta de cuerpos. Se trata de escribir el código que
+      sincronice a estas tres personas, de forma que las dos primeras personas no avancen si su cesta está llena, y que
+      la tercera persona no avance si le faltan piezas para hacer un nuevo jersey. Se supone que las capacidades de las
+      dos cestas son constantes y distintas (supongan, por ejemplo, que son dos constantes enteras «NumMaxMangas» y
+      «NumMaxCuerpos»).</p>
+  </header>
+
+  <div class="ctl" role="toolbar" aria-label="Controles de la animación">
+    <div class="g"><button type="button" class="btn pri" id="btnPlay">Pausar</button><button type="button" class="btn"
+        id="btnReset">Reiniciar</button></div>
+    <div class="g"><span class="lbl">Velocidad</span>
+      <div class="seg" id="segVel"><button type="button" data-vel="0.25" aria-pressed="false">¼×</button><button type="button" data-vel="0.5" aria-pressed="true">½×</button><button
+          type="button" data-vel="1" aria-pressed="false">1×</button><button type="button" data-vel="2"
+          aria-pressed="false">2×</button><button type="button" data-vel="4" aria-pressed="false">4×</button></div>
+    </div>
+    <div class="g"><label class="lbl" for="ritmo">Ensamblador</label><input type="range" id="ritmo" min="1" max="5"
+        step="1" value="4"><span class="ritmo-txt" id="ritmoTxt">lento</span></div>
+    <label class="g auto"><input type="checkbox" id="autoPausa"> Pausar en cada wait()</label>
+    <p class="aviso" id="aviso" role="status" hidden></p>
+  </div>
+
+  <section class="escen" aria-label="Escenario de la simulación">
+    <div class="escen-b escen-casos">
+      <span class="lbl">Casos armados</span>
+      <div class="seg casos" id="casos"><button type="button" data-caso="vacio" aria-pressed="false">Vacío</button><button type="button" data-caso="lleno" aria-pressed="false">Mangas llenas</button><button type="button" data-caso="tres" aria-pressed="false">3 mangas y 1 cuerpo</button><button type="button" data-caso="cuerpo" aria-pressed="false">Falta el cuerpo</button></div>
+      <p class="caso-txt" id="casoTxt"></p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Arranca con</span>
+      <div class="stps">
+          <div class="stp" data-cesto="mangas"><span class="stp-n">Mangas</span><button type="button" class="btn" data-d="-1" aria-label="Una manga menos">−</button><output>0</output><span class="stp-max">/ 5</span><button type="button" class="btn" data-d="1" aria-label="Una manga más">+</button></div>
+          <div class="stp" data-cesto="cuerpos"><span class="stp-n">Cuerpos</span><button type="button" class="btn" data-d="-1" aria-label="Un cuerpo menos">−</button><output>0</output><span class="stp-max">/ 3</span><button type="button" class="btn" data-d="1" aria-label="Un cuerpo más">+</button></div>
+      </div>
+      <p class="escen-nota">Cambiar las piezas reinicia la simulación.</p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Hilos</span>
+      <div class="hilos-t">
+          <button type="button" class="hilo-t" data-actor="cost" aria-pressed="true" style="--who: var(--e1)">Costurera<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="fab" aria-pressed="true" style="--who: var(--e2)">Fabricante<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="ens" aria-pressed="true" style="--who: var(--e3)">Ensamblador<span>trabaja</span></button>
+      </div>
+      <p class="escen-nota">Tocá un hilo para detenerlo o reactivarlo, sin reiniciar. Detenido, no entra al monitor.</p>
+    </div>
+  </section>
+
+  <div class="escena">
+    <div class="sk w-tejido" data-world="tejido"></div>
+  </div>
+
+  <section class="clave" aria-label="Código clave del monitor">
+    <div class="clave-cod">
+      <pre><span class="l"><i></i><span><span class="kw">class</span> Taller {</span></span><span class="l"><i></i><span>    <span class="kw">private int</span> mangas = 0;   <span class="cm">// piezas en cada cesto</span></span></span><span class="l"><i></i><span>    <span class="kw">private int</span> cuerpos = 0;</span></span><span class="l"><i></i><span> </span></span><span class="l k"><i><span class="mk">1</span></i><span>    <span class="kw">synchronized void</span> dejarManga() {</span></span><span class="l k w"><i><span class="mk w">2</span></i><span>        <span class="kw">while</span> (mangas == NUM_MAX_MANGAS)</span></span><span class="l k w"><i></i><span>            wait();</span></span><span class="l"><i></i><span>        mangas++;</span></span><span class="l k"><i><span class="mk">3</span></i><span>        notifyAll();</span></span><span class="l"><i></i><span>    }</span></span><span class="l"><i></i><span>    <span class="cm">// dejarCuerpo() es igual, con cuerpos y NUM_MAX_CUERPOS</span></span></span><span class="l"><i></i><span> </span></span><span class="l k"><i><span class="mk">1</span></i><span>    <span class="kw">synchronized void</span> tomarPiezas() {</span></span><span class="l k w"><i><span class="mk w">2</span></i><span>        <span class="kw">while</span> (mangas &lt; 2 || cuerpos &lt; 1)</span></span><span class="l k w"><i></i><span>            wait();</span></span><span class="l k"><i><span class="mk">4</span></i><span>        mangas -= 2;  cuerpos -= 1;</span></span><span class="l k"><i><span class="mk">3</span></i><span>        notifyAll();</span></span><span class="l"><i></i><span>    }</span></span><span class="l"><i></i><span>}</span></span></pre>
+    </div>
+    <div class="clave-notas">
+      <h3>Código</h3>
+      <ol>
+        <li><span class="mk">1</span><span><code>synchronized</code> convierte la clase en monitor: un solo hilo a la
+            vez adentro. La exclusión mutua sobre los cestos sale sola, sin <code>mutex</code> a mano.</span></li>
+        <li><span class="mk w">2</span><span><code>while (…) wait();</code> es la condición de espera: si el cesto está
+            lleno o faltan piezas, el hilo suelta el monitor y duerme. Va con <code>while</code> y no con
+            <code>if</code> porque al despertar tiene que volver a revisar.</span></li>
+        <li><span class="mk">3</span><span><code>notifyAll()</code> avisa que el estado cambió: los que esperaban
+            vuelven a la cola de entrada y revisan su condición.</span></li>
+        <li><span class="mk">4</span><span>El ensamblador saca 2 mangas y 1 cuerpo <b>en una sola operación</b>, así que
+            nunca queda con piezas a medias. Por eso elegimos el monitor.</span></li>
+      </ol>
+      <p class="pie">Versión resumida: el archivo real además imprime cada paso y declara
+        <code>throws InterruptedException</code>.</p>
+    </div>
+  </section>
+
+  <section class="explica">
+    <div class="panel">
+      <h3>Cómo funciona el monitor</h3>
+      <p>Los dos cestos viven dentro del monitor <code>Taller</code>. En Java, <code>synchronized</code> garantiza que
+        haya <b>un solo hilo adentro</b> a la vez. Los demás esperan en la <b>cola de entrada</b>.</p>
+      <ul>
+        <li>Si un hilo no puede seguir (cesto lleno o faltan piezas), llama a <code>wait()</code>: suelta el monitor y
+          pasa a esperar aparte, sin bloquear a nadie.</li>
+        <li>Quien cambia el estado llama a <code>notifyAll()</code>: todos los que esperaban pasan a la cola de entrada
+          y, cuando les toca, <b>vuelven a revisar</b> su condición.</li>
+        <li>Por eso la condición va en un <code>while</code> y no en un <code>if</code>: al volver, el cesto puede
+          seguir lleno. En la salida se ve como "lleno: espera" dos veces seguidas para la misma persona.</li>
+      </ul>
+      <p>El ensamblador se lleva las 3 piezas <b>en una sola operación</b>, así que nunca queda con
+        piezas a medias. Esa es la ventaja principal frente a los semáforos.</p>
+    </div>
+    <div class="panel full">
+      <h3>Por qué monitor y no semáforos</h3>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Semáforos</th>
+              <th>Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclusión mutua</td>
+              <td>A mano, con <code>mutex</code> (P al entrar, V al salir)</td>
+              <td>Automática, con <code>synchronized</code></td>
+            </tr>
+            <tr>
+              <td>Esperar por espacio o piezas</td>
+              <td>Semáforos contadores <code>hayLugar</code> / <code>hayPiezas</code></td>
+              <td><code>while (condición) wait();</code></td>
+            </tr>
+            <tr>
+              <td>Avisar que algo cambió</td>
+              <td><code>V()</code> sobre el semáforo que corresponde</td>
+              <td><code>notifyAll()</code>, y cada uno revisa su condición</td>
+            </tr>
+            <tr>
+              <td>Tomar 2 mangas y 1 cuerpo</td>
+              <td>En pasos separados: puede quedar con piezas en la mano</td>
+              <td>Todo junto, en una sola operación</td>
+            </tr>
+            <tr>
+              <td>Error típico</td>
+              <td>Invertir el orden de los P, u olvidar un V</td>
+              <td>Usar <code>if</code> en lugar de <code>while</code></td>
+            </tr>
+          </tbody>
+        </table>
+  </section>
+</div>
+
+<script src="script-escenarios.js"></script>

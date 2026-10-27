@@ -1,0 +1,157 @@
+<meta charset="utf-8">
+<title>Fábrica de Bicicletas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Martian+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="escenarios.css">
+
+<div class="wrap">
+  <header>
+    <h1>Fábrica de bicicletas <span class="h1-sub">· escenarios</span></h1>
+    <p class="enunciado">Ejercicio resuelto 10.5 (pág. 363): En una fábrica de bicicletas hay 2 operarios y 1 montador. El primer operario
+      construye ruedas, el segundo operario construye marcos de bicicleta y el montador se encarga de tomar 2 ruedas y 1
+      marco, y de esta forma montar una bicicleta. La actuación concurrente de estas 3 personas está sujeta a las
+      siguientes restricciones:</p>
+    <ul class="enunciado">
+      <li>El montador no podrá coger ningún material, si dicho material no ha sido fabricado de antemano por el operario
+        correspondiente.</li>
+      <li>El operario que fabrica marcos no tiene espacio más que para almacenar 4 de estos objetos; deberá esperar si en
+        cualquier momento ha fabricado 4 marcos, sin que ninguno haya sido tomado por el montador. El número máximo de
+        objetos que puede almacenar el operario que fabrica ruedas es de 10.</li>
+    </ul>
+  </header>
+
+  <div class="ctl" role="toolbar" aria-label="Controles de la animación">
+    <div class="g"><button type="button" class="btn pri" id="btnPlay">Pausar</button><button type="button" class="btn"
+        id="btnReset">Reiniciar</button></div>
+    <div class="g"><span class="lbl">Velocidad</span>
+      <div class="seg" id="segVel"><button type="button" data-vel="0.25" aria-pressed="false">¼×</button><button type="button" data-vel="0.5" aria-pressed="true">½×</button><button
+          type="button" data-vel="1" aria-pressed="false">1×</button><button type="button" data-vel="2"
+          aria-pressed="false">2×</button><button type="button" data-vel="4" aria-pressed="false">4×</button></div>
+    </div>
+    <div class="g"><label class="lbl" for="ritmo">Montador</label><input type="range" id="ritmo" min="1" max="5"
+        step="1" value="4"><span class="ritmo-txt" id="ritmoTxt">lento</span></div>
+    <label class="g auto"><input type="checkbox" id="autoPausa"> Pausar en cada wait()</label>
+    <p class="aviso" id="aviso" role="status" hidden></p>
+  </div>
+
+  <section class="escen" aria-label="Escenario de la simulación">
+    <div class="escen-b escen-casos">
+      <span class="lbl">Casos armados</span>
+      <div class="seg casos" id="casos"><button type="button" data-caso="vacio" aria-pressed="false">Vacío</button><button type="button" data-caso="lleno" aria-pressed="false">Marcos llenos</button><button type="button" data-caso="rueda" aria-pressed="false">Falta 1 rueda</button><button type="button" data-caso="mano" aria-pressed="false">Ruedas en la mano</button></div>
+      <p class="caso-txt" id="casoTxt"></p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Arranca con</span>
+      <div class="stps">
+          <div class="stp" data-cesto="ruedas"><span class="stp-n">Ruedas</span><button type="button" class="btn" data-d="-1" aria-label="Una rueda menos">−</button><output>0</output><span class="stp-max">/ 10</span><button type="button" class="btn" data-d="1" aria-label="Una rueda más">+</button></div>
+          <div class="stp" data-cesto="marcos"><span class="stp-n">Marcos</span><button type="button" class="btn" data-d="-1" aria-label="Un marco menos">−</button><output>0</output><span class="stp-max">/ 4</span><button type="button" class="btn" data-d="1" aria-label="Un marco más">+</button></div>
+      </div>
+      <p class="escen-nota">Cambiar las piezas reinicia la simulación.</p>
+    </div>
+    <div class="escen-b">
+      <span class="lbl">Hilos</span>
+      <div class="hilos-t">
+          <button type="button" class="hilo-t" data-actor="ru" aria-pressed="true" style="--who: var(--e1)">Operario de ruedas<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="ma" aria-pressed="true" style="--who: var(--e2)">Operario de marcos<span>trabaja</span></button>
+          <button type="button" class="hilo-t" data-actor="mo" aria-pressed="true" style="--who: var(--e3)">Montador<span>trabaja</span></button>
+      </div>
+      <p class="escen-nota">Tocá un hilo para detenerlo o reactivarlo, sin reiniciar. Detenido, no entra al monitor.</p>
+    </div>
+  </section>
+
+  <div class="escena">
+    <div class="sk w-tejido" id="escena"></div>
+  </div>
+
+  <section class="clave" aria-label="Código clave del monitor">
+    <div class="clave-cod">
+      <pre id="claveCod"></pre>
+    </div>
+    <div class="clave-notas">
+      <h3>Código</h3>
+      <ol>
+        <li><span class="mk">1</span><span><code>synchronized</code> hace de cada <code>Buffer</code> un monitor. Hay
+            dos instancias, ruedas y marcos, y cada una tiene su propio candado: el operario de ruedas no frena al de
+            marcos.</span></li>
+        <li><span class="mk w">2</span><span><code>while (…) wait();</code> es la condición de espera: almacén lleno
+            para el operario, piezas insuficientes para el montador. Va con <code>while</code> porque al despertar hay
+            que volver a revisar.</span></li>
+        <li><span class="mk">3</span><span><code>notifyAll()</code> avisa que el almacén cambió, así el que esperaba
+            vuelve a probar.</span></li>
+        <li><span class="mk">4</span><span><code>extraer(n)</code> saca las n piezas <b>en una sola operación</b>: las 2
+            ruedas salen juntas. El arreglo circular con <code>i</code> y <code>j</code> respeta el orden de
+            llegada.</span></li>
+        <li><span class="mk">5</span><span>Son dos monitores, así que el montador primero saca las ruedas y después el
+            marco: puede quedarse esperando el marco con las ruedas en la mano. Con un solo montador no es un
+            problema.</span></li>
+      </ol>
+      <p class="pie">Versión resumida: el archivo real además imprime cada paso y declara
+        <code>throws InterruptedException</code>.</p>
+    </div>
+  </section>
+
+  <section class="explica">
+    <div class="panel">
+      <h3>Cómo funciona</h3>
+      <p>Cada almacén es un productor-consumidor con buffer acotado, igual que en el proyecto del drive, pero
+        sincronizado con un monitor en lugar de semáforos.</p>
+      <ul>
+        <li>El operario llama a <code>poner()</code>. Si el almacén está lleno (10 ruedas o 4 marcos), hace
+          <code>wait()</code>: suelta el monitor y duerme.</li>
+        <li>El montador llama a <code>extraer(2)</code> en ruedas y <code>extraer(1)</code> en marcos. Si no alcanzan
+          las piezas, hace <code>wait()</code>.</li>
+        <li>Después de cada cambio, <code>notifyAll()</code> despierta al que esperaba y este vuelve a revisar su
+          condición.</li>
+      </ul>
+      <p>Con el montador lento, el almacén de marcos (capacidad 4) se llena primero y el operario de
+        marcos queda en <code>wait()</code>. Los números debajo de las piezas muestran cómo avanzan <code>i</code>
+        (donde se pone) y <code>j</code> (de donde se saca), dando la vuelta al arreglo.</p>
+    </div>
+    <div class="panel">
+      <h3>Por qué monitor y no semáforos</h3>
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Semáforos</th>
+              <th>Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exclusión mutua</td>
+              <td>A mano, con un <code>mutex</code> por almacén (P al entrar, V al salir)</td>
+              <td>Automática, con <code>synchronized</code></td>
+            </tr>
+            <tr>
+              <td>Esperar lugar o piezas</td>
+              <td>Semáforos contadores <code>hayEspacio</code> / <code>hayDatos</code></td>
+              <td><code>while (condición) wait();</code></td>
+            </tr>
+            <tr>
+              <td>Avisar que algo cambió</td>
+              <td><code>V()</code> sobre el semáforo que corresponde</td>
+              <td><code>notifyAll()</code>, y cada uno revisa su condición</td>
+            </tr>
+            <tr>
+              <td>Sacar 2 ruedas</td>
+              <td>Dos <code>P(hayDatos)</code> separados: con dos montadores, cada uno podría quedarse con una rueda y
+                trabarse</td>
+              <td>Un solo <code>extraer(2)</code>: las 2 ruedas salen juntas</td>
+            </tr>
+            <tr>
+              <td>Error típico</td>
+              <td>Invertir el orden de los P, u olvidar un V</td>
+              <td>Usar <code>if</code> en lugar de <code>while</code></td>
+            </tr>
+          </tbody>
+        </table>
+  </section>
+</div>
+
+<script src="script-escenarios.js"></script>
