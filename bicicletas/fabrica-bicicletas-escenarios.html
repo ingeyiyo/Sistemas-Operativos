@@ -97,8 +97,7 @@
   <section class="explica">
     <div class="panel">
       <h3>Cómo funciona</h3>
-      <p>Cada almacén es un productor-consumidor con buffer acotado, igual que en el proyecto del drive, pero
-        sincronizado con un monitor en lugar de semáforos.</p>
+      <p>Cada almacén es un productor-consumidor con buffer acotado</p>
       <ul>
         <li>El operario llama a <code>poner()</code>. Si el almacén está lleno (10 ruedas o 4 marcos), hace
           <code>wait()</code>: suelta el monitor y duerme.</li>
