@@ -1,4 +1,4 @@
-// Animación de taller-jerseys-v2.html: simula los hilos de monitor/TallerJerseys.java y dibuja la escena.
+// Animación de taller-jerseys.html: simula los hilos de monitor/TallerJerseys.java y dibuja la escena.
 (() => {
   "use strict";
   const MAX_M = 5, MAX_C = 3, N_J = 6, STEP = 260, CS = 450, PROD = [500, 1100];

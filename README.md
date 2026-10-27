@@ -5,7 +5,7 @@ Trabajo de la presentación del 27/10/2026 (FACET-UNT). Dos problemas de product
 | Problema | Carpeta | Programa | Animación |
 |---|---|---|---|
 | Problema resuelto: fábrica de bicicletas (ejercicio resuelto 10.5, pág. 363) | [`bicicletas/`](bicicletas) | `FabricaBicicletas.java` | `fabrica-bicicletas.html` |
-| Problema propuesto: taller de jerseys (tema propuesto 6, pág. 273) | [`jersey/`](jersey) | `TallerJerseys.java` | `taller-jerseys-v2.html` |
+| Problema propuesto: taller de jerseys (tema propuesto 6, pág. 273) | [`jersey/`](jersey) | `TallerJerseys.java` | `taller-jerseys.html` |
 
 ## Contenido
 
@@ -391,7 +391,7 @@ Los dos problemas también se pueden resolver con semáforos (el proyecto del dr
 
 ## 7. Las animaciones
 
-Las páginas `taller-jerseys-v2.html` y `fabrica-bicicletas.html` **no ejecutan el Java**: un navegador no puede correr Java. Son una **simulación en JavaScript** que reproduce paso a paso la misma lógica (las mismas condiciones, `wait`, `notifyAll`, cola de entrada y conjunto de espera) para hacerla visible.
+Las páginas `taller-jerseys.html` y `fabrica-bicicletas.html` **no ejecutan el Java**: un navegador no puede correr Java. Son una **simulación en JavaScript** que reproduce paso a paso la misma lógica (las mismas condiciones, `wait`, `notifyAll`, cola de entrada y conjunto de espera) para hacerla visible.
 
 Qué muestra cada página:
 - Una tarjeta por hilo, con su estado (*trabajando*, *en el monitor*, *bloqueado*) y la línea de código en la que está.
