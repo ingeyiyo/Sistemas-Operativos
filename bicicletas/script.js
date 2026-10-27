@@ -209,7 +209,7 @@
     const almHtml = (n, titulo) => `<div class="cesto" data-alm="${n}"><div class="cesto-h"><b>${titulo}</b><span data-r="cnt"></span></div><div class="slots"></div></div>`;
     root.innerHTML = `
     <svg class="sk-threads" aria-hidden="true"></svg>
-    <div class="sk-top"><b>Patrón: fábrica de bicicletas</b><span>solución con monitor</span><span data-r="time"></span></div>
+    <div class="sk-top"><b>Fábrica de bicicletas</b><span data-r="time"></span></div>
     <div class="sk-floor">
       <div class="sk-col"><h5>Operarios</h5>${actorHtml("ru", "Operario de ruedas")}${actorHtml("ma", "Operario de marcos")}</div>
       <div class="sk-col"><h5>Almacenes (Buffer)</h5>${almHtml("ruedas", "Ruedas")}${almHtml("marcos", "Marcos")}</div>

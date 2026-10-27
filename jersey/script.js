@@ -158,7 +158,7 @@
 
   // ================= RENDERER DOM (tejido y señales) =================
   function crearDom(root) {
-    const T = { titulo: "Patrón: taller de jerseys", prod: "Hilados", cestos: "Bloques de la carta", ens: "Armado", jer: "Prendas terminadas", sync: "Contadores", code: "Filas del patrón (código)", log: "Notas del patrón (salida)" };
+    const T = { titulo: "Taller de jerseys", prod: "Hilados", cestos: "Bloques de la carta", ens: "Armado", jer: "Prendas terminadas", sync: "Contadores", code: "Filas del patrón (código)", log: "Notas del patrón (salida)" };
     const actorHtml = (id, nombre) =>
       `<div class="act" data-actor="${id}" style="--who: var(--a-${id})">${ICON.ovillo}<b>${nombre}<span class="st"></span></b><span class="es"></span><code></code>${id !== "ens" ? '<span class="pg"></span>' : ""}</div>`;
     root.innerHTML = `
@@ -225,7 +225,6 @@
         q('[data-r="sync"]').className = "sync-box"; q('[data-r="sync"]').dataset.html = "";
         q('[data-r="log"]').textContent = "";
         prev = { mangas: 0, cuerpos: 0 }; popDelay = { mangas: 0, cuerpos: 0 }; jPrev = 0; jDelay = 0; this.logLen = -1;
-        q('[data-r="modo"]').textContent = "solución con monitor";
       },
       onEvent(e) {
         if (e.type === "deja") popDelay[e.cesto] = volar(actorEl(e.actor), slotEl(e.cesto, e.idx), e.pieza);
