@@ -9,7 +9,7 @@
 // Montador), pero con Buffer convertido en monitor: métodos synchronized con
 // wait() y notifyAll() en lugar de los semáforos hayEspacio / hayDatos / mutex.
 //
-// Para ejecutarlo:  java FabricaBicicletas.java
+
 import java.util.Random;
 
 public class FabricaBicicletas {

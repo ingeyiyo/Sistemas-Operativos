@@ -9,8 +9,7 @@
 // synchronized es un monitor: un solo hilo a la vez puede estar ejecutando
 // cualquiera de esos métodos. wait() deja al hilo esperando y libera el monitor;
 // notifyAll() despierta a los que esperan para que vuelvan a revisar su condición.
-//
-// Para ejecutarlo:  java TallerJerseys.java
+
 import java.util.Random;
 
 public class TallerJerseys {
